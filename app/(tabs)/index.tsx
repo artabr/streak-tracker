@@ -26,34 +26,71 @@ import {
 } from "@/components/ui/bottomsheet";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
-import { Flame } from "lucide-react-native";
+import { Flame, Snowflake } from "lucide-react-native";
 import { useContext, useEffect } from "react";
+import { Calendar, CalendarUtils } from "react-native-calendars";
+
+import React from "react";
+
+const getDate = (count: number) => {
+  const date = new Date();
+  const newDate = date.setDate(date.getDate() + count);
+  return CalendarUtils.getCalendarDateString(newDate);
+};
 
 export default function HomeScreen() {
-  const { visible, handleClose, handleOpen, bottomSheetRef } =
-    useContext(BottomSheetContext);
-
-  const handleOpenPress = () => {
-    console.log("handleOpenPress");
-    handleOpen();
-  };
-
-  useEffect(() => {
-    console.log("visible", visible);
-    if (!visible) {
-      bottomSheetRef.current?.expand();
-    }
-  }, [bottomSheetRef.current, visible]);
-
   return (
-    <>
-      <Pressable onPress={handleOpenPress}>
-        <Text className="mt-40 text-white bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5">
-          open
-        </Text>
-      </Pressable>
-      <BottomSheetTrigger>
-        <Text className="mt-40 text-white bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5">
+    <View className="h-full pt-12 bg-white">
+      <Calendar
+        markedDates={{
+          [getDate(1)]: {
+            marked: true,
+            dotColor: "red",
+          },
+          [getDate(2)]: {
+            marked: true,
+            dotColor: "red",
+          },
+          [getDate(3)]: {
+            marked: true,
+            dotColor: "blue",
+          },
+          [getDate(4)]: {
+            marked: true,
+            dotColor: "red",
+          },
+        }}
+        dayComponent={(props) => {
+          if (props.marking?.marked && props.marking?.dotColor === "red") {
+            return (
+              <View>
+                <Text className="font-bold text-lg">
+                  <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
+                </Text>
+              </View>
+            );
+          }
+          if (props.marking?.marked && props.marking?.dotColor === "blue") {
+            return (
+              <View>
+                <Text className="font-bold text-lg">
+                  <Icon
+                    as={Snowflake}
+                    className="flex-1 w-8 h-8 text-cyan-300"
+                  />
+                </Text>
+              </View>
+            );
+          }
+          return (
+            <View>
+              <Text>{props.date?.day}</Text>
+            </View>
+          );
+        }}
+      />
+      <BottomSheetTrigger className="absolute bottom-0">
+        <Text className="text-white bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5">
           Press me
         </Text>
       </BottomSheetTrigger>
@@ -95,23 +132,6 @@ export default function HomeScreen() {
           </View>
         </BottomSheetContent>
       </BottomSheetPortal>
-    </>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-  titleContainer2: {
-    height: 178,
-    width: 290,
-    bottom: 178,
-    left: 0,
-    position: "absolute",
-  },
-});
