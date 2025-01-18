@@ -1,8 +1,3 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import "src/app/global.css";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -13,17 +8,7 @@ import { GluestackUIProvider } from "src/components/ui/gluestack-ui-provider";
 import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import {
-  BottomSheet,
-  BottomSheetBackdrop,
-  BottomSheetContent,
-  BottomSheetDragIndicator,
-  BottomSheetItem,
-  BottomSheetItemText,
-  BottomSheetPortal,
-  BottomSheetTrigger,
-} from "src/components/ui/bottomsheet";
-import { Text } from "src/components/ui/text";
+import { BottomSheet } from "src/components/ui/bottomsheet";
 import { useColorScheme } from "src/hooks/useColorScheme";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

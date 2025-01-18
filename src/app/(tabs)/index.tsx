@@ -1,36 +1,17 @@
-import {
-  Image,
-  Text as NativeText,
-  Platform,
-  StyleSheet,
-  View,
-} from "react-native";
-
-import { HelloWave } from "src/components/HelloWave";
-import ParallaxScrollView from "src/components/ParallaxScrollView";
-import { ThemedText } from "src/components/ThemedText";
-import { ThemedView } from "src/components/ThemedView";
-import { Pressable } from "src/components/ui/pressable/index";
+import { View } from "react-native";
 import { Text } from "src/components/ui/text";
 
 import { Flame, Snowflake } from "lucide-react-native";
-import { useContext, useEffect } from "react";
 import { Calendar, CalendarUtils } from "react-native-calendars";
 import {
-  BottomSheet,
   BottomSheetBackdrop,
   BottomSheetContent,
-  BottomSheetContext,
   BottomSheetDragIndicator,
-  BottomSheetItem,
-  BottomSheetItemText,
   BottomSheetPortal,
   BottomSheetTrigger,
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
-
-import React from "react";
 
 const getDate = (count: number) => {
   const date = new Date();
