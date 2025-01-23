@@ -8,13 +8,17 @@ import { GluestackUIProvider } from "src/components/ui/gluestack-ui-provider";
 import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { BottomSheet } from "src/components/ui/bottomsheet";
+import { studioDb } from "src/db/drizzle";
 import { useColorScheme } from "src/hooks/useColorScheme";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useDrizzleStudio(studioDb);
+
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("public/assets/fonts/SpaceMono-Regular.ttf"),

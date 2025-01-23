@@ -1,7 +1,7 @@
-import { View } from "react-native";
-import { Text } from "src/components/ui/text";
-
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Flame, Snowflake } from "lucide-react-native";
+import { View } from "react-native";
 import { Calendar, CalendarUtils } from "react-native-calendars";
 import {
   BottomSheetBackdrop,
@@ -12,6 +12,10 @@ import {
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
+import { Text } from "src/components/ui/text";
+import { db } from "src/db/drizzle";
+import migrations from "src/db/migrations/migrations";
+import { calendarMarksTable } from "src/db/schema";
 
 const getDate = (count: number) => {
   const date = new Date();
@@ -20,6 +24,32 @@ const getDate = (count: number) => {
 };
 
 export default function HomeScreen() {
+  const { success, error } = useMigrations(db, migrations);
+
+  if (error) {
+    return (
+      <View className="flex-1 gap-5 p-6 bg-secondary/30">
+        <Text>Migration error: {error.message}</Text>
+      </View>
+    );
+  }
+  if (!success) {
+    return (
+      <View className="flex-1 gap-5 p-6 bg-secondary/30">
+        <Text>Migration is in progress...</Text>
+      </View>
+    );
+  }
+
+  return <HomeScreenContent />;
+}
+
+function HomeScreenContent() {
+  const { data: calendarMarks, error } = useLiveQuery(
+    db.select().from(calendarMarksTable),
+  );
+  console.log(calendarMarks, error);
+
   return (
     <View className="h-full pt-12 bg-white">
       <Calendar
