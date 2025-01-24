@@ -1,8 +1,9 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Flame, Snowflake } from "lucide-react-native";
-import { View } from "react-native";
+import { type GestureResponderEvent, View } from "react-native";
 import { Calendar, CalendarUtils } from "react-native-calendars";
+import type { DateData, MarkedDates } from "react-native-calendars/src/types";
 import {
   BottomSheetBackdrop,
   BottomSheetContent,
@@ -12,10 +13,12 @@ import {
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
+import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
 import { calendarMarksTable } from "src/db/schema";
+import type { CalendarMark } from "src/db/schema";
 
 const getDate = (count: number) => {
   const date = new Date();
@@ -50,26 +53,42 @@ function HomeScreenContent() {
   );
   console.log(calendarMarks, error);
 
+  const calendarMarksToMarkedDates = (calendarMarks: CalendarMark[]) => {
+    return calendarMarks.reduce<MarkedDates>((acc, calendarMark) => {
+      acc[calendarMark.calendarDate] = {
+        marked: true,
+        dotColor: calendarMark.mark,
+      };
+      return acc;
+    }, {});
+  };
+
+  const markedDates = calendarMarksToMarkedDates(calendarMarks ?? []);
+
+  const insertCalendarMark = async (calendarMark: CalendarMark) => {
+    return db.insert(calendarMarksTable).values(calendarMark).returning();
+  };
+
+  const onDayPress = (day?: DateData) => (event: GestureResponderEvent) => {
+    console.log("selected day", day);
+    const id = insertCalendarMark({
+      id: "xxx",
+      calendarDate: CalendarUtils.getCalendarDateString(day?.timestamp) ?? "",
+      mark: "red",
+    });
+    console.log("inserted id", id);
+  };
+
   return (
     <View className="h-full pt-12 bg-white">
       <Calendar
-        markedDates={{
-          [getDate(1)]: {
-            marked: true,
-            dotColor: "red",
-          },
-          [getDate(2)]: {
-            marked: true,
-            dotColor: "red",
-          },
-          [getDate(3)]: {
-            marked: true,
-            dotColor: "blue",
-          },
-          [getDate(4)]: {
-            marked: true,
-            dotColor: "red",
-          },
+        markedDates={markedDates}
+        onDayPress={onDayPress}
+        onDayLongPress={(day) => {
+          console.log("selected day", day);
+        }}
+        onMonthChange={(month) => {
+          console.log("month changed", month);
         }}
         dayComponent={(props) => {
           if (props.marking?.marked && props.marking?.dotColor === "red") {
@@ -95,7 +114,9 @@ function HomeScreenContent() {
           }
           return (
             <View>
-              <Text>{props.date?.day}</Text>
+              <Pressable onPress={onDayPress(props.date)}>
+                <Text>{props.date?.day}</Text>
+              </Pressable>
             </View>
           );
         }}
