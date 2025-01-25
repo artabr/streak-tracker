@@ -1,3 +1,5 @@
+import { createId } from "@paralleldrive/cuid2";
+import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Flame, Snowflake } from "lucide-react-native";
@@ -49,9 +51,12 @@ export default function HomeScreen() {
 
 function HomeScreenContent() {
   const { data: calendarMarks, error } = useLiveQuery(
-    db.select().from(calendarMarksTable),
+    db.query.calendarMarksTable.findMany({
+      where: eq(calendarMarksTable.habitId, "defaultId"),
+      with: { habit: true },
+    }),
   );
-  console.log(calendarMarks, error);
+  console.log(calendarMarks);
 
   const calendarMarksToMarkedDates = (calendarMarks: CalendarMark[]) => {
     return calendarMarks.reduce<MarkedDates>((acc, calendarMark) => {
@@ -72,9 +77,10 @@ function HomeScreenContent() {
   const onDayPress = (day?: DateData) => (event: GestureResponderEvent) => {
     console.log("selected day", day);
     const id = insertCalendarMark({
-      id: "xxx",
+      id: createId(),
       calendarDate: CalendarUtils.getCalendarDateString(day?.timestamp) ?? "",
       mark: "red",
+      habitId: "defaultId",
     });
     console.log("inserted id", id);
   };
