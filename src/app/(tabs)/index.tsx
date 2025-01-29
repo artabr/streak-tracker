@@ -6,11 +6,7 @@ import { AppState, type GestureResponderEvent, View } from "react-native";
 import { Calendar, CalendarUtils } from "react-native-calendars";
 import type { DateData, MarkedDates } from "react-native-calendars/src/types";
 import {
-  BottomSheetBackdrop,
-  BottomSheetContent,
   BottomSheetContext,
-  BottomSheetDragIndicator,
-  BottomSheetPortal,
   BottomSheetTrigger,
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
@@ -24,6 +20,7 @@ import {
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
 import type { CalendarMark } from "src/db/schema";
+import { StreakNotificationSheet } from "src/views/StreakNotificationSheet/StreakNotificationSheet";
 
 const getDate = (count: number) => {
   const date = new Date();
@@ -57,7 +54,8 @@ export default function HomeScreen() {
 }
 
 function HomeScreenContent() {
-  const { calendarMarks, addCalendarMark, isNeedToMark } = useHabitContext();
+  const { calendarMarks, addCalendarMark, isNeedToMark, daysToMark } =
+    useHabitContext();
 
   const calendarMarksToMarkedDates = (calendarMarks: CalendarMark[]) => {
     return calendarMarks.reduce<MarkedDates>((acc, calendarMark) => {
@@ -155,44 +153,7 @@ function HomeScreenContent() {
           Press me
         </Text>
       </BottomSheetTrigger>
-      <BottomSheetPortal
-        snapPoints={["70%"]}
-        backdropComponent={BottomSheetBackdrop}
-        handleComponent={BottomSheetDragIndicator}
-      >
-        <BottomSheetContent>
-          <View className="max-w-md mx-auto p-6 w-full">
-            <Text className="text-2xl font-bold text-center mb-6">
-              Fill the streak
-            </Text>
-
-            <View className="flex flex-row space-x-2 mb-6">
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-            </View>
-
-            <Text className="text-xl text-center mt-10 text-gray-600">
-              You have to fill the streak
-            </Text>
-
-            <View className="flex flex-col gap-8 mt-10">
-              <View className="flex flex-row gap-8">
-                <Button className="flex-1 h-24 bg-orange-500">
-                  <ButtonText className="text-lg">Fill</ButtonText>
-                </Button>
-                <Button className="flex-1 h-24 bg-cyan-100" variant="outline">
-                  <ButtonText className="text-lg">Skip</ButtonText>
-                </Button>
-              </View>
-              <Button variant="outline" className="h-12 w-full">
-                <ButtonText className="text-lg">Later</ButtonText>
-              </Button>
-            </View>
-          </View>
-        </BottomSheetContent>
-      </BottomSheetPortal>
+      <StreakNotificationSheet daysToMark={daysToMark} />
     </View>
   );
 }
