@@ -1,5 +1,4 @@
 import { createId } from "@paralleldrive/cuid2";
-import { eq } from "drizzle-orm";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Flame, Snowflake } from "lucide-react-native";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -24,7 +23,6 @@ import {
 } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
-import { calendarMarksTable } from "src/db/schema";
 import type { CalendarMark } from "src/db/schema";
 
 const getDate = (count: number) => {
@@ -58,38 +56,8 @@ export default function HomeScreen() {
   );
 }
 
-const fetchHabitFromDb = async () => {
-  const queryResults = await db.query.calendarMarksTable.findMany({
-    where: eq(calendarMarksTable.habitId, "defaultId"),
-    with: { habit: true },
-  });
-
-  const calendarMarks: CalendarMark[] = queryResults.map((queryResult) => ({
-    id: queryResult.id,
-    calendarDate: queryResult.calendarDate,
-    mark: queryResult.mark,
-    habitId: queryResult.habitId,
-  }));
-
-  return { calendarMarks, habit: queryResults[0]?.habit };
-};
-
 function HomeScreenContent() {
-  const { calendarMarks, setCalendarMarks, setCurrentHabit, isNeedToMark } =
-    useHabitContext();
-
-  const setHabitState = async () => {
-    const { calendarMarks, habit } = await fetchHabitFromDb();
-
-    setCalendarMarks(calendarMarks);
-    setCurrentHabit(habit);
-  };
-
-  useEffect(() => {
-    void setHabitState();
-  }, []);
-
-  console.log(calendarMarks);
+  const { calendarMarks, addCalendarMark, isNeedToMark } = useHabitContext();
 
   const calendarMarksToMarkedDates = (calendarMarks: CalendarMark[]) => {
     return calendarMarks.reduce<MarkedDates>((acc, calendarMark) => {
@@ -103,19 +71,13 @@ function HomeScreenContent() {
 
   const markedDates = calendarMarksToMarkedDates(calendarMarks ?? []);
 
-  const insertCalendarMark = async (calendarMark: CalendarMark) => {
-    return db.insert(calendarMarksTable).values(calendarMark).returning();
-  };
-
   const onDayPress = (day?: DateData) => (event: GestureResponderEvent) => {
-    console.log("selected day", day);
-    const id = insertCalendarMark({
+    void addCalendarMark({
       id: createId(),
       calendarDate: CalendarUtils.getCalendarDateString(day?.timestamp) ?? "",
       mark: "red",
       habitId: "defaultId",
     });
-    console.log("inserted id", id);
   };
 
   const { handleOpen } = useContext(BottomSheetContext);
@@ -134,6 +96,7 @@ function HomeScreenContent() {
         nextAppState === "active"
       ) {
         console.log("App has come to the foreground!");
+        console.log("isNeedToMark", isNeedToMark);
         if (isNeedToMark) {
           handleOpen();
         }
@@ -141,7 +104,6 @@ function HomeScreenContent() {
 
       appState.current = nextAppState;
       setAppStateVisible(appState.current);
-      console.log("AppState", appState.current);
     });
 
     return () => {
@@ -154,12 +116,6 @@ function HomeScreenContent() {
       <Calendar
         markedDates={markedDates}
         onDayPress={onDayPress}
-        onDayLongPress={(day) => {
-          console.log("selected day", day);
-        }}
-        onMonthChange={(month) => {
-          console.log("month changed", month);
-        }}
         dayComponent={(props) => {
           if (props.marking?.marked && props.marking?.dotColor === "red") {
             return (

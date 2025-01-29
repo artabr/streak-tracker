@@ -1,17 +1,11 @@
-import {
-  type ReactNode,
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { type ReactNode, createContext, useContext, useMemo } from "react";
 import type { CalendarMark, Habit } from "src/db/schema";
+import { useHabitData } from "src/hooks/useHabitData";
 
 interface HabitContextType {
   currentHabit?: Habit;
   calendarMarks: CalendarMark[];
-  setCurrentHabit: (habit: Habit) => void;
-  setCalendarMarks: (marks: CalendarMark[]) => void;
+  addCalendarMark: (calendarMark: CalendarMark) => Promise<void>;
   isNeedToMark: boolean;
   daysToMark: number;
 }
@@ -39,8 +33,7 @@ const calculateMarkingStatus = (habit?: Habit) => {
 };
 
 export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
-  const [calendarMarks, setCalendarMarks] = useState<CalendarMark[]>([]);
-  const [currentHabit, setCurrentHabit] = useState<Habit | undefined>();
+  const { currentHabit, addCalendarMark, calendarMarks } = useHabitData();
 
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
 
@@ -48,12 +41,11 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
     return {
       calendarMarks,
       currentHabit,
-      setCurrentHabit,
-      setCalendarMarks,
+      addCalendarMark,
       isNeedToMark,
       daysToMark,
     };
-  }, [calendarMarks, currentHabit, isNeedToMark, daysToMark]);
+  }, [calendarMarks, currentHabit, addCalendarMark, isNeedToMark, daysToMark]);
 
   return (
     <HabitContext.Provider value={value}>{children}</HabitContext.Provider>
