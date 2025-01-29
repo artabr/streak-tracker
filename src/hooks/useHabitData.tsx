@@ -5,6 +5,7 @@ import {
   type CalendarMark,
   type Habit,
   calendarMarksTable,
+  habitsTable,
 } from "src/db/schema";
 
 const fetchHabitFromDb = async () => {
@@ -23,8 +24,19 @@ const fetchHabitFromDb = async () => {
   return { calendarMarks, habit: queryResults[0]?.habit };
 };
 
-const insertCalendarMark = async (calendarMark: CalendarMark) => {
-  return db.insert(calendarMarksTable).values(calendarMark).returning();
+const insertCalendarMarks = async (calendarMarks: CalendarMark[]) => {
+  return db.insert(calendarMarksTable).values(calendarMarks).returning();
+};
+
+const updateLastMarkingDate = async (
+  habitId: string,
+  lastMarkingDate: string,
+) => {
+  return db
+    .update(habitsTable)
+    .set({ lastMarkingDate })
+    .where(eq(habitsTable.id, habitId))
+    .returning();
 };
 
 export const useHabitData = () => {
@@ -38,17 +50,21 @@ export const useHabitData = () => {
     setCurrentHabit(habit);
   };
 
-  const addCalendarMark = async (calendarMark: CalendarMark) => {
+  const addCalendarMarks = async (
+    calendarMarks: CalendarMark[],
+    lastMarkingDate: string,
+  ) => {
     setCalendarMarks((prevCalendarMarks) => [
       ...prevCalendarMarks,
-      calendarMark,
+      ...calendarMarks,
     ]);
-    await insertCalendarMark(calendarMark);
+    await insertCalendarMarks(calendarMarks);
+    await updateLastMarkingDate("defaultId", lastMarkingDate);
   };
 
   useEffect(() => {
     void setHabitState();
   }, []);
 
-  return { calendarMarks, currentHabit, addCalendarMark };
+  return { calendarMarks, currentHabit, addCalendarMarks };
 };

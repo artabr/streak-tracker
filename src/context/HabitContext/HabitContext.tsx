@@ -1,13 +1,19 @@
+import { createId } from "@paralleldrive/cuid2";
 import { type ReactNode, createContext, useContext, useMemo } from "react";
+import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
 import { useHabitData } from "src/hooks/useHabitData";
 
 interface HabitContextType {
   currentHabit?: Habit;
   calendarMarks: CalendarMark[];
-  addCalendarMark: (calendarMark: CalendarMark) => Promise<void>;
+  addCalendarMarks: (
+    calendarMarks: CalendarMark[],
+    lastMarkingDate: string,
+  ) => Promise<void>;
   isNeedToMark: boolean;
   daysToMark: number;
+  fillStreak: (skip?: boolean) => void;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -33,19 +39,45 @@ const calculateMarkingStatus = (habit?: Habit) => {
 };
 
 export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
-  const { currentHabit, addCalendarMark, calendarMarks } = useHabitData();
+  const { currentHabit, addCalendarMarks, calendarMarks } = useHabitData();
 
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
+
+  const fillStreak = (skip?: boolean) => {
+    const streakData = Array.from({ length: daysToMark }, (_, index) => {
+      const date = new Date(currentHabit?.lastMarkingDate ?? Date.now());
+      date.setDate(date.getDate() + index + 1);
+      return {
+        id: createId(),
+        calendarDate: CalendarUtils.getCalendarDateString(date),
+        habitId: currentHabit?.id ?? "defaultId",
+        mark: skip ? "blue" : "red",
+      };
+    });
+
+    void addCalendarMarks(
+      streakData,
+      CalendarUtils.getCalendarDateString(Date.now()),
+    );
+  };
 
   const value = useMemo(() => {
     return {
       calendarMarks,
       currentHabit,
-      addCalendarMark,
+      addCalendarMarks,
       isNeedToMark,
       daysToMark,
+      fillStreak,
     };
-  }, [calendarMarks, currentHabit, addCalendarMark, isNeedToMark, daysToMark]);
+  }, [
+    calendarMarks,
+    currentHabit,
+    addCalendarMarks,
+    isNeedToMark,
+    daysToMark,
+    fillStreak,
+  ]);
 
   return (
     <HabitContext.Provider value={value}>{children}</HabitContext.Provider>
