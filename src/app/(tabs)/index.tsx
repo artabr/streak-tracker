@@ -5,13 +5,13 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AppState, type GestureResponderEvent, View } from "react-native";
 import { Calendar, CalendarUtils } from "react-native-calendars";
 import type { DateData, MarkedDates } from "react-native-calendars/src/types";
+import { FlameNumberIcon } from "src/components/FlameNumberIcon/FlameNumberIcon";
 import {
   BottomSheetBackdrop,
   BottomSheetContent,
   BottomSheetContext,
   BottomSheetDragIndicator,
   BottomSheetPortal,
-  BottomSheetTrigger,
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
@@ -92,7 +92,7 @@ function HomeScreenContent() {
     );
   };
 
-  const { handleOpen } = useContext(BottomSheetContext);
+  const { handleOpen, handleClose } = useContext(BottomSheetContext);
 
   const handleOpenBottomSheet = () => {
     handleOpen();
@@ -125,10 +125,16 @@ function HomeScreenContent() {
 
   const onFillHandler = () => {
     fillStreak();
+    handleClose();
   };
 
   const onSkipHandler = () => {
     fillStreak(true);
+    handleClose();
+  };
+
+  const onPostponeHandler = () => {
+    handleClose();
   };
 
   console.log("daysToMark", daysToMark);
@@ -169,14 +175,14 @@ function HomeScreenContent() {
           );
         }}
       />
-      <Button className="absolute bottom-40" onPress={handleOpenBottomSheet}>
-        <ButtonText>Open Bottom Sheet</ButtonText>
-      </Button>
-      <BottomSheetTrigger className="absolute bottom-0">
-        <Text className="text-white bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5">
-          Press me
-        </Text>
-      </BottomSheetTrigger>
+      <View className="absolute bottom-0 w-full h-1/3 flex items-center justify-center">
+        <Pressable
+          className="w-40 h-40 bg-orange-300 text-white rounded-full flex items-center justify-center"
+          onPress={handleOpenBottomSheet}
+        >
+          <Icon as={FlameNumberIcon} size="xl" className="w-24 h-24" />
+        </Pressable>
+      </View>
       <BottomSheetPortal
         snapPoints={["70%"]}
         backdropComponent={BottomSheetBackdrop}
@@ -217,7 +223,9 @@ function HomeScreenContent() {
                 </Button>
               </View>
               <Button variant="outline" className="h-12 w-full">
-                <ButtonText className="text-lg">Later</ButtonText>
+                <ButtonText className="text-lg" onPress={onPostponeHandler}>
+                  Later
+                </ButtonText>
               </Button>
             </View>
           </View>

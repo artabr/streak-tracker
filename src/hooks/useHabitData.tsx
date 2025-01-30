@@ -58,6 +58,12 @@ export const useHabitData = () => {
       ...prevCalendarMarks,
       ...calendarMarks,
     ]);
+    setCurrentHabit((prevHabit) => ({
+      ...prevHabit,
+      id: prevHabit?.id ?? "defaultId",
+      name: prevHabit?.name ?? "currentHabit",
+      lastMarkingDate,
+    }));
     await insertCalendarMarks(calendarMarks);
     await updateLastMarkingDate("defaultId", lastMarkingDate);
   };
