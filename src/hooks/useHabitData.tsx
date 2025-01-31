@@ -7,6 +7,7 @@ import {
   calendarMarksTable,
   habitsTable,
 } from "src/db/schema";
+import { getYesterdaysCalendarDateString } from "src/utils/calendar";
 
 const fetchHabitFromDb = async () => {
   const queryResults = await db.query.calendarMarksTable.findMany({
@@ -68,9 +69,22 @@ export const useHabitData = () => {
     await updateLastMarkingDate("defaultId", lastMarkingDate);
   };
 
+  const clearCalendarMarks = async () => {
+    setCalendarMarks([]);
+    setCurrentHabit((prevHabit) => ({
+      ...prevHabit,
+      id: prevHabit?.id ?? "defaultId",
+      name: prevHabit?.name ?? "currentHabit",
+      lastMarkingDate: getYesterdaysCalendarDateString(),
+    }));
+    await db
+      .delete(calendarMarksTable)
+      .where(eq(calendarMarksTable.habitId, "defaultId"));
+  };
+
   useEffect(() => {
     void setHabitState();
   }, []);
 
-  return { calendarMarks, currentHabit, addCalendarMarks };
+  return { calendarMarks, currentHabit, addCalendarMarks, clearCalendarMarks };
 };

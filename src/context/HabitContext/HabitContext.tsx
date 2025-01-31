@@ -3,6 +3,7 @@ import { type ReactNode, createContext, useContext, useMemo } from "react";
 import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
 import { useHabitData } from "src/hooks/useHabitData";
+import { getTodayCalendarDateString } from "src/utils/calendar";
 
 interface HabitContextType {
   currentHabit?: Habit;
@@ -14,6 +15,7 @@ interface HabitContextType {
   isNeedToMark: boolean;
   daysToMark: number;
   fillStreak: (skip?: boolean) => void;
+  clearCalendarMarks: () => void;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -27,8 +29,9 @@ const calculateMarkingStatus = (habit?: Habit) => {
     };
   }
 
-  const today = new Date();
+  const today = new Date(getTodayCalendarDateString());
   const lastMarkingDate = new Date(habit.lastMarkingDate);
+  console.log(today, lastMarkingDate);
   const diffTime = Math.abs(today.getTime() - lastMarkingDate.getTime());
   const daysToMark = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -39,7 +42,8 @@ const calculateMarkingStatus = (habit?: Habit) => {
 };
 
 export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
-  const { currentHabit, addCalendarMarks, calendarMarks } = useHabitData();
+  const { currentHabit, addCalendarMarks, calendarMarks, clearCalendarMarks } =
+    useHabitData();
 
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
 
@@ -55,10 +59,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       };
     });
 
-    void addCalendarMarks(
-      streakData,
-      CalendarUtils.getCalendarDateString(Date.now()),
-    );
+    void addCalendarMarks(streakData, getTodayCalendarDateString());
   };
 
   const value = useMemo(() => {
@@ -69,6 +70,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       isNeedToMark,
       daysToMark,
       fillStreak,
+      clearCalendarMarks,
     };
   }, [
     calendarMarks,
@@ -77,6 +79,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
     isNeedToMark,
     daysToMark,
     fillStreak,
+    clearCalendarMarks,
   ]);
 
   return (

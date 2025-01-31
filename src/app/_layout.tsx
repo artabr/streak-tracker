@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { BottomSheet } from "src/components/ui/bottomsheet";
+import { HabitContextProvider } from "src/context/HabitContext/HabitContext";
 import { studioDb } from "src/db/drizzle";
 import { useColorScheme } from "src/hooks/useColorScheme";
 
@@ -37,13 +38,15 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GluestackUIProvider mode="light">
-        <BottomSheet>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </BottomSheet>
+        <HabitContextProvider>
+          <BottomSheet>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+          </BottomSheet>
+        </HabitContextProvider>
       </GluestackUIProvider>
     </GestureHandlerRootView>
   );

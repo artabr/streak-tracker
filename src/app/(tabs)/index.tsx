@@ -3,7 +3,7 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Flame, Snowflake } from "lucide-react-native";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AppState, type GestureResponderEvent, View } from "react-native";
-import { Calendar, CalendarUtils } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 import type { DateData, MarkedDates } from "react-native-calendars/src/types";
 import { FlameNumberIcon } from "src/components/FlameNumberIcon/FlameNumberIcon";
 import {
@@ -17,19 +17,11 @@ import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
 import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
-import {
-  HabitContextProvider,
-  useHabitContext,
-} from "src/context/HabitContext/HabitContext";
+import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
 import type { CalendarMark } from "src/db/schema";
-
-const getDate = (count: number) => {
-  const date = new Date();
-  const newDate = date.setDate(date.getDate() + count);
-  return CalendarUtils.getCalendarDateString(newDate);
-};
+import { getCalendarDateStringInNumberOfDays } from "src/utils/calendar";
 
 export default function HomeScreen() {
   const { success, error } = useMigrations(db, migrations);
@@ -49,11 +41,7 @@ export default function HomeScreen() {
     );
   }
 
-  return (
-    <HabitContextProvider>
-      <HomeScreenContent />
-    </HabitContextProvider>
-  );
+  return <HomeScreenContent />;
 }
 
 function HomeScreenContent() {
@@ -82,13 +70,12 @@ function HomeScreenContent() {
       [
         {
           id: createId(),
-          calendarDate:
-            CalendarUtils.getCalendarDateString(day?.timestamp) ?? "",
+          calendarDate: getCalendarDateStringInNumberOfDays(day?.timestamp),
           mark: "red",
           habitId: "defaultId",
         },
       ],
-      CalendarUtils.getCalendarDateString(day?.timestamp) ?? "",
+      getCalendarDateStringInNumberOfDays(day?.timestamp),
     );
   };
 
@@ -211,21 +198,26 @@ function HomeScreenContent() {
 
             <View className="flex flex-col gap-8 mt-10">
               <View className="flex flex-row gap-8">
-                <Button className="flex-1 h-24 bg-orange-500">
-                  <ButtonText className="text-lg" onPress={onFillHandler}>
-                    Fill
-                  </ButtonText>
+                <Button
+                  className="flex-1 h-24 bg-orange-500"
+                  onPress={onFillHandler}
+                >
+                  <ButtonText className="text-lg">Fill</ButtonText>
                 </Button>
-                <Button className="flex-1 h-24 bg-cyan-100" variant="outline">
-                  <ButtonText className="text-lg" onPress={onSkipHandler}>
-                    Skip
-                  </ButtonText>
+                <Button
+                  className="flex-1 h-24 bg-cyan-100"
+                  variant="outline"
+                  onPress={onSkipHandler}
+                >
+                  <ButtonText className="text-lg">Skip</ButtonText>
                 </Button>
               </View>
-              <Button variant="outline" className="h-12 w-full">
-                <ButtonText className="text-lg" onPress={onPostponeHandler}>
-                  Later
-                </ButtonText>
+              <Button
+                variant="outline"
+                className="h-12 w-full"
+                onPress={onPostponeHandler}
+              >
+                <ButtonText className="text-lg">Later</ButtonText>
               </Button>
             </View>
           </View>
