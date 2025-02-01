@@ -4,7 +4,7 @@ export const getTodayCalendarDateString = () => {
   return CalendarUtils.getCalendarDateString(Date.now());
 };
 
-export const getYesterdaysCalendarDateString = () => {
+export const getYesterdayCalendarDateString = () => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   return CalendarUtils.getCalendarDateString(yesterday);

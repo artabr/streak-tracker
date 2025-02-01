@@ -3,7 +3,10 @@ import { type ReactNode, createContext, useContext, useMemo } from "react";
 import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
 import { useHabitData } from "src/hooks/useHabitData";
-import { getTodayCalendarDateString } from "src/utils/calendar";
+import {
+  getTodayCalendarDateString,
+  getYesterdayCalendarDateString,
+} from "src/utils/calendar";
 
 interface HabitContextType {
   currentHabit?: Habit;
@@ -24,14 +27,15 @@ const HabitContext = createContext<HabitContextType | undefined>(undefined);
 const calculateMarkingStatus = (habit?: Habit) => {
   if (!habit) {
     return {
-      isNeedToMark: false,
-      daysToMark: 0,
+      isNeedToMark: true,
+      daysToMark: 1,
     };
   }
 
   const today = new Date(getTodayCalendarDateString());
-  const lastMarkingDate = new Date(habit.lastMarkingDate);
-  console.log(today, lastMarkingDate);
+  const lastMarkingDate = new Date(
+    habit?.lastMarkingDate ?? getYesterdayCalendarDateString(),
+  );
   const diffTime = Math.abs(today.getTime() - lastMarkingDate.getTime());
   const daysToMark = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 

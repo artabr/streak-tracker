@@ -7,7 +7,7 @@ import {
   calendarMarksTable,
   habitsTable,
 } from "src/db/schema";
-import { getYesterdaysCalendarDateString } from "src/utils/calendar";
+import { getYesterdayCalendarDateString } from "src/utils/calendar";
 
 const fetchHabitFromDb = async () => {
   const queryResults = await db.query.calendarMarksTable.findMany({
@@ -75,7 +75,7 @@ export const useHabitData = () => {
       ...prevHabit,
       id: prevHabit?.id ?? "defaultId",
       name: prevHabit?.name ?? "currentHabit",
-      lastMarkingDate: getYesterdaysCalendarDateString(),
+      lastMarkingDate: getYesterdayCalendarDateString(),
     }));
     await db
       .delete(calendarMarksTable)

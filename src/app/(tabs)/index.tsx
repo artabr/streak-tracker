@@ -65,6 +65,7 @@ function HomeScreenContent() {
 
   const markedDates = calendarMarksToMarkedDates(calendarMarks ?? []);
 
+  // TODO: make a popup to manually edit the streak days
   const onDayPress = (day?: DateData) => (event: GestureResponderEvent) => {
     void addCalendarMarks(
       [
@@ -94,8 +95,6 @@ function HomeScreenContent() {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        console.log("App has come to the foreground!");
-        console.log("isNeedToMark", isNeedToMark);
         if (isNeedToMark) {
           handleOpen();
         }
@@ -123,8 +122,6 @@ function HomeScreenContent() {
   const onPostponeHandler = () => {
     handleClose();
   };
-
-  console.log("daysToMark", daysToMark);
 
   return (
     <View className="h-full pt-12 bg-white">

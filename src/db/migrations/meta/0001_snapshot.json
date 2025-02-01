@@ -41,13 +41,9 @@
         "calendarMarks_habitId_habits_id_fk": {
           "name": "calendarMarks_habitId_habits_id_fk",
           "tableFrom": "calendarMarks",
-          "columnsFrom": [
-            "habitId"
-          ],
+          "columnsFrom": ["habitId"],
           "tableTo": "habits",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
