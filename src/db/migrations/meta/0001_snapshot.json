@@ -1,6 +1,6 @@
 {
-  "id": "b805cfa3-9c60-4d5c-b27a-216c41e15c2c",
-  "prevId": "e999b0b7-54dd-4428-8736-ffd0d63fd1c9",
+  "id": "da2418c1-30e7-4836-865f-8785a244f26e",
+  "prevId": "ceb2510b-d803-4cd2-a5ac-5d12f5171ae7",
   "version": "6",
   "dialect": "sqlite",
   "tables": {
@@ -37,7 +37,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "calendarMarks_habitId_habits_id_fk": {
+          "name": "calendarMarks_habitId_habits_id_fk",
+          "tableFrom": "calendarMarks",
+          "columnsFrom": [
+            "habitId"
+          ],
+          "tableTo": "habits",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -63,7 +77,7 @@
           "name": "lastMarkingDate",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },

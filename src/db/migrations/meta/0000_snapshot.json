@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "09f2a65c-25a3-4fed-b4c4-64c9a9479fe6",
+  "id": "ceb2510b-d803-4cd2-a5ac-5d12f5171ae7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "calendarMarks": {
@@ -42,8 +42,12 @@
           "name": "calendarMarks_habitId_habits_id_fk",
           "tableFrom": "calendarMarks",
           "tableTo": "habits",
-          "columnsFrom": ["habitId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "habitId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -73,7 +77,7 @@
           "name": "lastMarkingDate",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },

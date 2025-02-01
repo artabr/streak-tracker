@@ -9,7 +9,7 @@ CREATE TABLE `calendarMarks` (
 CREATE TABLE `habits` (
 	`id` text NOT NULL,
 	`name` text NOT NULL,
-	`lastMarkingDate` text NOT NULL
+	`lastMarkingDate` text
 );
 --> statement-breakpoint
 CREATE TABLE `userSettings` (
