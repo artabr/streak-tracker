@@ -1,6 +1,8 @@
 import { createId } from "@paralleldrive/cuid2";
+import { IconFlame } from "@tabler/icons-react-native";
+import { clsx } from "clsx";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { Flame, Snowflake } from "lucide-react-native";
+import { Snowflake } from "lucide-react-native";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AppState, type GestureResponderEvent, View } from "react-native";
 import { Calendar } from "react-native-calendars";
@@ -21,7 +23,10 @@ import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
 import type { CalendarMark } from "src/db/schema";
-import { getCalendarDateStringInNumberOfDays } from "src/utils/calendar";
+import {
+  getCalendarDateStringInNumberOfDays,
+  getTodayCalendarDateString,
+} from "src/utils/calendar";
 
 export default function HomeScreen() {
   const { success, error } = useMigrations(db, migrations);
@@ -124,38 +129,49 @@ function HomeScreenContent() {
   };
 
   return (
-    <View className="h-full pt-12 bg-white">
+    <View className="h-full pt-12 bg-gray-100">
       <Calendar
+        style={{
+          backgroundColor: "#FBFBFB",
+        }}
+        firstDay={1}
+        theme={{
+          backgroundColor: "#FBFBFB",
+          calendarBackground: "#FBFBFB",
+          arrowColor: "#FE8235",
+        }}
         markedDates={markedDates}
         onDayPress={onDayPress}
         dayComponent={(props) => {
+          const isToday =
+            props.date?.dateString === getTodayCalendarDateString();
           if (props.marking?.marked && props.marking?.dotColor === "red") {
             return (
-              <View>
-                <Text className="font-bold text-lg">
-                  <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
+              <View className={clsx("rounded p-1", isToday && "bg-stone-100")}>
+                <Text>
+                  <Icon as={IconFlame} className="w-8 h-8 text-orange-500" />
                 </Text>
               </View>
             );
           }
           if (props.marking?.marked && props.marking?.dotColor === "blue") {
             return (
-              <View>
-                <Text className="font-bold text-lg">
-                  <Icon
-                    as={Snowflake}
-                    className="flex-1 w-8 h-8 text-cyan-300"
-                  />
+              <View className={clsx("rounded p-1", isToday && "bg-stone-100")}>
+                <Text>
+                  <Icon as={Snowflake} className="w-8 h-8 text-cyan-300" />
                 </Text>
               </View>
             );
           }
           return (
-            <View>
-              <Pressable onPress={onDayPress(props.date)}>
-                <Text>{props.date?.day}</Text>
-              </Pressable>
-            </View>
+            <Pressable
+              className={clsx("rounded p-1", isToday && "bg-stone-100")}
+              onPress={onDayPress(props.date)}
+            >
+              <View className="w-8 h-8 flex items-center justify-center">
+                <Text className="text-lg text-gray-800">{props.date?.day}</Text>
+              </View>
+            </Pressable>
           );
         }}
       />
@@ -169,22 +185,22 @@ function HomeScreenContent() {
       >
         <BottomSheetContent>
           <View className="max-w-md mx-auto p-6 w-full">
-            <Text className="text-2xl font-bold text-center mb-6">
+            <Text className="text-2xl font-bold text-center">
               Fill the streak
             </Text>
 
-            <View className="flex flex-row space-x-2 mb-6">
+            <View className="flex flex-row justify-center my-10 gap-6">
               {Array.from({ length: daysToMark }).map((_, index) => (
                 <Icon
                   // biome-ignore lint/suspicious/noArrayIndexKey: it's fine here because all elements are the same icons
                   key={index}
-                  as={Flame}
-                  className="flex-1 w-8 h-8 text-orange-500"
+                  as={IconFlame}
+                  className="w-14 h-14 text-orange-500"
                 />
               ))}
             </View>
 
-            <Text className="text-xl text-center mt-10 text-gray-600">
+            <Text className="text-xl text-center text-gray-800">
               You have to fill the streak
             </Text>
 
@@ -197,19 +213,17 @@ function HomeScreenContent() {
                   <ButtonText className="text-lg">Fill</ButtonText>
                 </Button>
                 <Button
-                  className="flex-1 h-24 bg-cyan-100"
-                  variant="outline"
+                  className="flex-1 h-24 bg-blue-700"
                   onPress={onSkipHandler}
                 >
-                  <ButtonText className="text-lg">Skip</ButtonText>
+                  <ButtonText className="text-lg">Skip previous</ButtonText>
                 </Button>
               </View>
               <Button
-                variant="outline"
-                className="h-12 w-full"
+                className="h-12 w-full bg-stone-100"
                 onPress={onPostponeHandler}
               >
-                <ButtonText className="text-lg">Later</ButtonText>
+                <ButtonText className="text-lg text-gray-700">Later</ButtonText>
               </Button>
             </View>
           </View>

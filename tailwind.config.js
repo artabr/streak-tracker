@@ -11,6 +11,29 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // custom colors for the app
+        orange: {
+          300: "#F09E54",
+          500: "#FE8235",
+        },
+        blue: {
+          500: "#36BAFF",
+          700: "#2581B3",
+        },
+        gray: {
+          100: "#FBFBFB",
+          200: "#F5F5F5",
+          300: "#EBEBEB",
+          400: "#E0E0E0",
+          500: "#D4D4D4",
+          600: "#C9C9C9",
+          700: "#8A8A8A",
+          800: "#707070",
+        },
+        stone: {
+          100: "#F4F2F1",
+        },
+        // gluestack colors
         primary: {
           0: "rgb(var(--color-primary-0)/<alpha-value>)",
           50: "rgb(var(--color-primary-50)/<alpha-value>)",

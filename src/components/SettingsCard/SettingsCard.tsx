@@ -16,7 +16,10 @@ export const SettingsCard = () => {
   return (
     <Card className="w-full">
       <Heading>Settings</Heading>
-      <Text>Manage your app settings</Text>
+      <Text>
+        If you want to start from scratch and clear all your progress, including
+        streaks and marked days, click here. This action cannot be undone.
+      </Text>
       <Button onPress={handleCleanDatabase} className="w-full">
         <ButtonText>Clean Database</ButtonText>
       </Button>
