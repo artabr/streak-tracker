@@ -107,7 +107,7 @@ function HomeScreenContent() {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [isNeedToMark]);
 
   const onFillHandler = () => {
     fillStreak();

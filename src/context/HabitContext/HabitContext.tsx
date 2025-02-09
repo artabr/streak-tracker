@@ -40,7 +40,7 @@ const calculateMarkingStatus = (habit?: Habit) => {
   const daysToMark = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   return {
-    isNeedToMark: daysToMark > 1,
+    isNeedToMark: daysToMark > 0,
     daysToMark,
   };
 };
