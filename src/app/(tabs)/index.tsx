@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { AppState, type GestureResponderEvent, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import type { DateData, MarkedDates } from "react-native-calendars/src/types";
-import { FlameNumberIcon } from "src/components/FlameNumberIcon/FlameNumberIcon";
+import { FillPanelButton } from "src/components/FillPanelButton/FillPanelButton";
 import {
   BottomSheetBackdrop,
   BottomSheetContent,
@@ -160,12 +160,7 @@ function HomeScreenContent() {
         }}
       />
       <View className="absolute bottom-0 w-full h-1/3 flex items-center justify-center">
-        <Pressable
-          className="w-40 h-40 bg-orange-300 text-white rounded-full flex items-center justify-center"
-          onPress={handleOpenBottomSheet}
-        >
-          <Icon as={FlameNumberIcon} size="xl" className="w-24 h-24" />
-        </Pressable>
+        <FillPanelButton onPress={handleOpenBottomSheet} />
       </View>
       <BottomSheetPortal
         snapPoints={["70%"]}
