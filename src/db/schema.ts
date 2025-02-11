@@ -33,7 +33,7 @@ export const habitsTable = sqliteTable("habits", {
     .$defaultFn(() => createId())
     .notNull(),
   name: text("name").notNull(),
-  lastMarkingDate: text("lastMarkingDate").notNull(),
+  lastMarkingDate: text("lastMarkingDate"),
 });
 
 export const habitsRelations = relations(habitsTable, ({ many }) => ({

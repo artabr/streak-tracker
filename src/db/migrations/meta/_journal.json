@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1737889974838,
-      "tag": "0000_icy_sebastian_shaw",
+      "when": 1738403659901,
+      "tag": "0000_free_reaper",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1737809692887,
-      "tag": "0001_user-settings",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1737810146520,
-      "tag": "0002_habits",
+      "when": 1738403667523,
+      "tag": "0001_seed-habits",
       "breakpoints": true
     }
   ]

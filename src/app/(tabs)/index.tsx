@@ -1,32 +1,32 @@
 import { createId } from "@paralleldrive/cuid2";
-import { eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { IconFlame } from "@tabler/icons-react-native";
+import { clsx } from "clsx";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { Flame, Snowflake } from "lucide-react-native";
-import { type GestureResponderEvent, View } from "react-native";
-import { Calendar, CalendarUtils } from "react-native-calendars";
+import { Snowflake } from "lucide-react-native";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AppState, type GestureResponderEvent, View } from "react-native";
+import { Calendar } from "react-native-calendars";
 import type { DateData, MarkedDates } from "react-native-calendars/src/types";
+import { FillPanelButton } from "src/components/FillPanelButton/FillPanelButton";
 import {
   BottomSheetBackdrop,
   BottomSheetContent,
+  BottomSheetContext,
   BottomSheetDragIndicator,
   BottomSheetPortal,
-  BottomSheetTrigger,
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
 import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
+import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
-import { calendarMarksTable } from "src/db/schema";
 import type { CalendarMark } from "src/db/schema";
-
-const getDate = (count: number) => {
-  const date = new Date();
-  const newDate = date.setDate(date.getDate() + count);
-  return CalendarUtils.getCalendarDateString(newDate);
-};
+import {
+  getCalendarDateStringInNumberOfDays,
+  getTodayCalendarDateString,
+} from "src/utils/calendar";
 
 export default function HomeScreen() {
   const { success, error } = useMigrations(db, migrations);
@@ -50,13 +50,13 @@ export default function HomeScreen() {
 }
 
 function HomeScreenContent() {
-  const { data: calendarMarks, error } = useLiveQuery(
-    db.query.calendarMarksTable.findMany({
-      where: eq(calendarMarksTable.habitId, "defaultId"),
-      with: { habit: true },
-    }),
-  );
-  console.log(calendarMarks);
+  const {
+    calendarMarks,
+    addCalendarMarks,
+    isNeedToMark,
+    daysToMark,
+    fillStreak,
+  } = useHabitContext();
 
   const calendarMarksToMarkedDates = (calendarMarks: CalendarMark[]) => {
     return calendarMarks.reduce<MarkedDates>((acc, calendarMark) => {
@@ -70,68 +70,114 @@ function HomeScreenContent() {
 
   const markedDates = calendarMarksToMarkedDates(calendarMarks ?? []);
 
-  const insertCalendarMark = async (calendarMark: CalendarMark) => {
-    return db.insert(calendarMarksTable).values(calendarMark).returning();
+  // TODO: make a popup to manually edit the streak days
+  const onDayPress = (day?: DateData) => (event: GestureResponderEvent) => {
+    void addCalendarMarks(
+      [
+        {
+          id: createId(),
+          calendarDate: getCalendarDateStringInNumberOfDays(day?.timestamp),
+          mark: "red",
+          habitId: "defaultId",
+        },
+      ],
+      getCalendarDateStringInNumberOfDays(day?.timestamp),
+    );
   };
 
-  const onDayPress = (day?: DateData) => (event: GestureResponderEvent) => {
-    console.log("selected day", day);
-    const id = insertCalendarMark({
-      id: createId(),
-      calendarDate: CalendarUtils.getCalendarDateString(day?.timestamp) ?? "",
-      mark: "red",
-      habitId: "defaultId",
+  const { handleOpen, handleClose } = useContext(BottomSheetContext);
+
+  const handleOpenBottomSheet = () => {
+    handleOpen();
+  };
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        if (isNeedToMark) {
+          handleOpen();
+        }
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
     });
-    console.log("inserted id", id);
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isNeedToMark]);
+
+  const onFillHandler = () => {
+    fillStreak();
+    handleClose();
+  };
+
+  const onSkipHandler = () => {
+    fillStreak(true);
+    handleClose();
+  };
+
+  const onPostponeHandler = () => {
+    handleClose();
   };
 
   return (
-    <View className="h-full pt-12 bg-white">
+    <View className="h-full pt-12 bg-gray-100">
       <Calendar
+        style={{
+          backgroundColor: "#FBFBFB",
+        }}
+        firstDay={1}
+        theme={{
+          backgroundColor: "#FBFBFB",
+          calendarBackground: "#FBFBFB",
+          arrowColor: "#FE8235",
+        }}
         markedDates={markedDates}
         onDayPress={onDayPress}
-        onDayLongPress={(day) => {
-          console.log("selected day", day);
-        }}
-        onMonthChange={(month) => {
-          console.log("month changed", month);
-        }}
         dayComponent={(props) => {
+          const isToday =
+            props.date?.dateString === getTodayCalendarDateString();
           if (props.marking?.marked && props.marking?.dotColor === "red") {
             return (
-              <View>
-                <Text className="font-bold text-lg">
-                  <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
+              <View className={clsx("rounded p-1", isToday && "bg-stone-100")}>
+                <Text>
+                  <Icon as={IconFlame} className="w-8 h-8 text-orange-500" />
                 </Text>
               </View>
             );
           }
           if (props.marking?.marked && props.marking?.dotColor === "blue") {
             return (
-              <View>
-                <Text className="font-bold text-lg">
-                  <Icon
-                    as={Snowflake}
-                    className="flex-1 w-8 h-8 text-cyan-300"
-                  />
+              <View className={clsx("rounded p-1", isToday && "bg-stone-100")}>
+                <Text>
+                  <Icon as={Snowflake} className="w-8 h-8 text-cyan-300" />
                 </Text>
               </View>
             );
           }
           return (
-            <View>
-              <Pressable onPress={onDayPress(props.date)}>
-                <Text>{props.date?.day}</Text>
-              </Pressable>
-            </View>
+            <Pressable
+              className={clsx("rounded p-1", isToday && "bg-stone-100")}
+              onPress={onDayPress(props.date)}
+            >
+              <View className="w-8 h-8 flex items-center justify-center">
+                <Text className="text-lg text-gray-800">{props.date?.day}</Text>
+              </View>
+            </Pressable>
           );
         }}
       />
-      <BottomSheetTrigger className="absolute bottom-0">
-        <Text className="text-white bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5">
-          Press me
-        </Text>
-      </BottomSheetTrigger>
+      <View className="absolute bottom-0 w-full h-1/3 flex items-center justify-center">
+        <FillPanelButton onPress={handleOpenBottomSheet} />
+      </View>
       <BottomSheetPortal
         snapPoints={["70%"]}
         backdropComponent={BottomSheetBackdrop}
@@ -139,32 +185,45 @@ function HomeScreenContent() {
       >
         <BottomSheetContent>
           <View className="max-w-md mx-auto p-6 w-full">
-            <Text className="text-2xl font-bold text-center mb-6">
+            <Text className="text-2xl font-bold text-center">
               Fill the streak
             </Text>
 
-            <View className="flex flex-row space-x-2 mb-6">
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
-              <Icon as={Flame} className="flex-1 w-8 h-8 text-orange-500" />
+            <View className="flex flex-row justify-center my-10 gap-6">
+              {Array.from({ length: daysToMark }).map((_, index) => (
+                <Icon
+                  // biome-ignore lint/suspicious/noArrayIndexKey: it's fine here because all elements are the same icons
+                  key={index}
+                  as={IconFlame}
+                  className="w-14 h-14 text-orange-500"
+                />
+              ))}
             </View>
 
-            <Text className="text-xl text-center mt-10 text-gray-600">
+            <Text className="text-xl text-center text-gray-800">
               You have to fill the streak
             </Text>
 
             <View className="flex flex-col gap-8 mt-10">
               <View className="flex flex-row gap-8">
-                <Button className="flex-1 h-24 bg-orange-500">
+                <Button
+                  className="flex-1 h-24 bg-orange-500"
+                  onPress={onFillHandler}
+                >
                   <ButtonText className="text-lg">Fill</ButtonText>
                 </Button>
-                <Button className="flex-1 h-24 bg-cyan-100" variant="outline">
-                  <ButtonText className="text-lg">Skip</ButtonText>
+                <Button
+                  className="flex-1 h-24 bg-blue-700"
+                  onPress={onSkipHandler}
+                >
+                  <ButtonText className="text-lg">Skip previous</ButtonText>
                 </Button>
               </View>
-              <Button variant="outline" className="h-12 w-full">
-                <ButtonText className="text-lg">Later</ButtonText>
+              <Button
+                className="h-12 w-full bg-stone-100"
+                onPress={onPostponeHandler}
+              >
+                <ButtonText className="text-lg text-gray-700">Later</ButtonText>
               </Button>
             </View>
           </View>

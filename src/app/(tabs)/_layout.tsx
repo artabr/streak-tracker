@@ -1,19 +1,16 @@
 import { Tabs } from "expo-router";
 import { Platform } from "react-native";
 
+import { IconHome, IconInfoCircle } from "@tabler/icons-react-native";
+import { clsx } from "clsx";
 import { HapticTab } from "src/components/HapticTab";
-import { IconSymbol } from "src/components/ui/IconSymbol";
 import TabBarBackground from "src/components/ui/TabBarBackground";
-import { Colors } from "src/constants/Colors";
-import { useColorScheme } from "src/hooks/useColorScheme";
+import { Icon } from "src/components/ui/icon";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
@@ -22,16 +19,30 @@ export default function TabLayout() {
             // Use a transparent background on iOS to show the blur effect
             position: "absolute",
           },
-          default: {},
+          default: {
+            height: 80,
+            borderTopWidth: 0,
+            shadowColor: "#FFFFFF",
+          },
         }),
+        tabBarShowLabel: false,
+        tabBarItemStyle: {
+          paddingTop: 20,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              as={IconHome}
+              className={clsx(
+                "w-10 h-10",
+                focused ? "text-orange-500" : "text-gray-500",
+              )}
+            />
           ),
         }}
       />
@@ -39,8 +50,14 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              as={IconInfoCircle}
+              className={clsx(
+                "w-10 h-10",
+                focused ? "text-orange-500" : "text-gray-500",
+              )}
+            />
           ),
         }}
       />
