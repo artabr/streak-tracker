@@ -63,7 +63,14 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       };
     });
 
-    void addCalendarMarks(streakData, getTodayCalendarDateString());
+    if (skip) {
+      streakData.pop();
+    }
+
+    void addCalendarMarks(
+      streakData,
+      skip ? getYesterdayCalendarDateString() : getTodayCalendarDateString(),
+    );
   };
 
   const value = useMemo(() => {

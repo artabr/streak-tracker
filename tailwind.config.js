@@ -13,8 +13,12 @@ module.exports = {
       colors: {
         // custom colors for the app
         orange: {
+          200: "#FEF3E7",
           300: "#F09E54",
           500: "#FE8235",
+        },
+        slate: {
+          500: "#5B7380",
         },
         blue: {
           500: "#36BAFF",
@@ -22,7 +26,7 @@ module.exports = {
         },
         gray: {
           100: "#FBFBFB",
-          200: "#F5F5F5",
+          200: "#F4F4F4",
           300: "#EBEBEB",
           400: "#E0E0E0",
           500: "#D4D4D4",
@@ -32,6 +36,8 @@ module.exports = {
         },
         stone: {
           100: "#F4F2F1",
+          700: "#573926",
+          800: "#371B34",
         },
         // gluestack colors
         primary: {
