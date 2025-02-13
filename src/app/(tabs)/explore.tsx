@@ -15,12 +15,12 @@ export default function TabTwoScreen() {
               Hi! Welcome to
             </Heading>
             <Heading size="3xl" className="text-stone-800">
-              Nicks - a habit tracker
+              Tend - a habit tracker
             </Heading>
             <Text className="">
-              With Nicks, you can easily track your progress and stay
-              consistent. Each day, you can mark your habit as filled (🔥 Fire)
-              or skipped (❄ Freeze), helping you stay accountable and motivated.
+              With Tend, you can easily track your progress and stay consistent.
+              Each day, you can mark your habit as filled (🔥 Fire) or skipped
+              (❄ Freeze), helping you stay accountable and motivated.
             </Text>
           </VStack>
 
