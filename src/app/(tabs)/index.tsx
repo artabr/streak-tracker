@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { IconFlame } from "@tabler/icons-react-native";
+import { IconFlame, IconTrophy } from "@tabler/icons-react-native";
 import { clsx } from "clsx";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Snowflake } from "lucide-react-native";
@@ -17,7 +17,6 @@ import {
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
-import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
@@ -39,11 +38,7 @@ export default function HomeScreen() {
     );
   }
   if (!success) {
-    return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
-        <Text>Migration is in progress...</Text>
-      </View>
-    );
+    return <View className="flex-1 gap-5 p-6 bg-secondary/30"></View>;
   }
 
   return <HomeScreenContent />;
@@ -128,6 +123,14 @@ function HomeScreenContent() {
     handleClose();
   };
 
+  const bottomSheetTitle = isNeedToMark
+    ? "Fill the streak"
+    : "The streak is filled";
+
+  const bottomSheetDescription = isNeedToMark
+    ? "Did you practice up to today? Fill the streak or skip previous days."
+    : "Great! You already practiced today! Keep it up!";
+
   return (
     <View className="h-full pt-12 bg-gray-100">
       <Calendar
@@ -141,7 +144,7 @@ function HomeScreenContent() {
           arrowColor: "#FE8235",
         }}
         markedDates={markedDates}
-        onDayPress={onDayPress}
+        // onDayPress={onDayPress}
         dayComponent={(props) => {
           const isToday =
             props.date?.dateString === getTodayCalendarDateString();
@@ -164,14 +167,11 @@ function HomeScreenContent() {
             );
           }
           return (
-            <Pressable
-              className={clsx("rounded p-1", isToday && "bg-stone-100")}
-              onPress={onDayPress(props.date)}
-            >
+            <View className={clsx("rounded p-1", isToday && "bg-stone-100")}>
               <View className="w-8 h-8 flex items-center justify-center">
                 <Text className="text-lg text-gray-800">{props.date?.day}</Text>
               </View>
-            </Pressable>
+            </View>
           );
         }}
       />
@@ -186,46 +186,56 @@ function HomeScreenContent() {
         <BottomSheetContent>
           <View className="max-w-md mx-auto p-6 w-full">
             <Text className="text-2xl font-bold text-center">
-              Fill the streak
+              {bottomSheetTitle}
             </Text>
 
-            <View className="flex flex-row justify-center my-10 gap-6">
-              {Array.from({ length: daysToMark }).map((_, index) => (
-                <Icon
-                  // biome-ignore lint/suspicious/noArrayIndexKey: it's fine here because all elements are the same icons
-                  key={index}
-                  as={IconFlame}
-                  className="w-14 h-14 text-orange-500"
-                />
-              ))}
-            </View>
+            {isNeedToMark ? (
+              <View className="flex flex-row justify-center my-10 gap-6">
+                {Array.from({ length: daysToMark }).map((_, index) => (
+                  <Icon
+                    // biome-ignore lint/suspicious/noArrayIndexKey: it's fine here because all elements are the same icons
+                    key={index}
+                    as={IconFlame}
+                    className="w-14 h-14 text-orange-500"
+                  />
+                ))}
+              </View>
+            ) : (
+              <View className="flex flex-row justify-center my-10">
+                <Icon as={IconTrophy} className="w-24 h-24 text-orange-500" />
+              </View>
+            )}
 
             <Text className="text-xl text-center text-gray-800">
-              You have to fill the streak
+              {bottomSheetDescription}
             </Text>
 
-            <View className="flex flex-col gap-8 mt-10">
-              <View className="flex flex-row gap-8">
+            {isNeedToMark && (
+              <View className="flex flex-col gap-8 mt-10">
+                <View className="flex flex-row gap-8">
+                  <Button
+                    className="flex-1 h-24 bg-orange-500"
+                    onPress={onFillHandler}
+                  >
+                    <ButtonText className="text-lg">Fill</ButtonText>
+                  </Button>
+                  <Button
+                    className="flex-1 h-24 bg-blue-700"
+                    onPress={onSkipHandler}
+                  >
+                    <ButtonText className="text-lg">Skip previous</ButtonText>
+                  </Button>
+                </View>
                 <Button
-                  className="flex-1 h-24 bg-orange-500"
-                  onPress={onFillHandler}
+                  className="h-12 w-full bg-stone-100"
+                  onPress={onPostponeHandler}
                 >
-                  <ButtonText className="text-lg">Fill</ButtonText>
-                </Button>
-                <Button
-                  className="flex-1 h-24 bg-blue-700"
-                  onPress={onSkipHandler}
-                >
-                  <ButtonText className="text-lg">Skip previous</ButtonText>
+                  <ButtonText className="text-lg text-gray-700">
+                    Later
+                  </ButtonText>
                 </Button>
               </View>
-              <Button
-                className="h-12 w-full bg-stone-100"
-                onPress={onPostponeHandler}
-              >
-                <ButtonText className="text-lg text-gray-700">Later</ButtonText>
-              </Button>
-            </View>
+            )}
           </View>
         </BottomSheetContent>
       </BottomSheetPortal>

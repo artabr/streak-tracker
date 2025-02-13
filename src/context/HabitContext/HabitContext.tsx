@@ -53,7 +53,9 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
 
   const fillStreak = (skip?: boolean) => {
     const streakData = Array.from({ length: daysToMark }, (_, index) => {
-      const date = new Date(currentHabit?.lastMarkingDate ?? Date.now());
+      const date = new Date(
+        currentHabit?.lastMarkingDate ?? getYesterdayCalendarDateString(),
+      );
       date.setDate(date.getDate() + index + 1);
       return {
         id: createId(),
