@@ -1,4 +1,27 @@
-# Welcome to your Expo app 👋
+# Welcome to Tend - a habit tracker
+
+With Tend, you can easily track your progress and stay consistent.
+Each day, you can mark your habit as filled (🔥 Fire) or skipped
+(❄ Freeze), helping you stay accountable and motivated.
+
+## How It Works
+
+🔥 Filled Days – Mark a day as Fire when you complete your
+habit. Keep going to build streaks!
+
+❄ Skipped Days – Mark a day as Freeze if you miss it. Life
+happens, and that’s okay!
+
+At the start of the app, we’ll notify you about the days you
+need to mark, so you never lose track.
+
+## Stay Motivated
+
+* Track your progress with a simple calendar view.
+* Build streaks to strengthen your habits.
+* Get reminders to keep you on track.
+
+Ready to build better habits? Start tracking today! 🔥
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
