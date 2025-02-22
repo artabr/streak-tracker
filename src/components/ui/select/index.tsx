@@ -209,7 +209,9 @@ const SelectIcon = React.forwardRef<
         size={size}
       />
     );
-  } else if (
+  }
+
+  if (
     //@ts-expect-error
     (props?.height !== undefined || props?.width !== undefined) &&
     size === undefined
@@ -222,6 +224,7 @@ const SelectIcon = React.forwardRef<
       />
     );
   }
+
   return (
     <UISelect.Icon
       className={selectIconStyle({

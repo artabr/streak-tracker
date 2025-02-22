@@ -1,5 +1,6 @@
 import { IconChevronDown } from "@tabler/icons-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
 import {
   AlertDialog,
   AlertDialogBackdrop,
@@ -33,16 +34,35 @@ import { Text } from "src/components/ui/text";
 import { useHabitSelector } from "src/hooks/useHabitSelector";
 
 export function HabitSelector() {
-  const {
-    selectedHabit,
-    habits,
-    handleHabitChange,
-    isAddingNew,
-    setIsAddingNew,
-    handleAddNewHabit,
-  } = useHabitSelector();
-
+  const { habits, addNewHabit } = useHabitSelector();
+  const [selectedHabit, setSelectedHabit] = useState<string>("");
+  const [isAddingNew, setIsAddingNew] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
+
+  // Set initial selected habit when habits are loaded
+  useEffect(() => {
+    if (habits.length > 0 && !selectedHabit) {
+      setSelectedHabit(habits[0].id);
+    }
+  }, [habits]);
+
+  const handleHabitChange = (value: string) => {
+    if (value === "new") {
+      setIsAddingNew(true);
+      return;
+    }
+    setSelectedHabit(value);
+  };
+
+  const handleAddNewHabit = async (name: string) => {
+    try {
+      const newHabit = await addNewHabit(name);
+      setSelectedHabit(newHabit.id);
+      setIsAddingNew(false);
+    } catch (error) {
+      // Handle error appropriately
+    }
+  };
 
   const handleSubmitNewHabit = () => {
     if (newHabitName.trim()) {
@@ -52,7 +72,7 @@ export function HabitSelector() {
   };
 
   return (
-    <>
+    <React.Fragment>
       <Select selectedValue={selectedHabit} onValueChange={handleHabitChange}>
         <SelectTrigger className="mx-4 mb-4">
           <SelectInput placeholder="Select a habit" />
@@ -69,7 +89,9 @@ export function HabitSelector() {
             {habits.map((habit) => (
               <SelectItem key={habit.id} label={habit.name} value={habit.id} />
             ))}
-            <SelectItem label="Add new habit" value="new" />
+            <Button onPress={() => setIsAddingNew(true)}>
+              <ButtonText>Add new habit</ButtonText>
+            </Button>
           </SelectContent>
         </SelectPortal>
       </Select>
@@ -106,6 +128,6 @@ export function HabitSelector() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </React.Fragment>
   );
 }

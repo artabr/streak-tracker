@@ -18,6 +18,7 @@ import {
 } from "src/components/ui/bottomsheet";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
+import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
@@ -169,11 +170,14 @@ function HomeScreenContent() {
             );
           }
           return (
-            <View className={clsx("rounded p-1", isToday && "bg-stone-100")}>
+            <Pressable
+              className={clsx("rounded p-1", isToday && "bg-stone-100")}
+              onPress={onDayPress(props.date)}
+            >
               <View className="w-8 h-8 flex items-center justify-center">
                 <Text className="text-lg text-gray-800">{props.date?.day}</Text>
               </View>
-            </View>
+            </Pressable>
           );
         }}
       />
