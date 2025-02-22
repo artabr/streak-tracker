@@ -1,6 +1,15 @@
-import { IconChevronDown } from "@tabler/icons-react-native";
+import { IconChevronDown, IconX } from "@tabler/icons-react-native";
 import { useEffect, useState } from "react";
 import React from "react";
+import {
+  Actionsheet,
+  ActionsheetBackdrop,
+  ActionsheetContent,
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper,
+  ActionsheetItem,
+  ActionsheetItemText,
+} from "src/components/ui/actionsheet";
 import {
   AlertDialog,
   AlertDialogBackdrop,
@@ -18,28 +27,17 @@ import {
   InputIcon,
   InputSlot,
 } from "src/components/ui/input";
-import {
-  Select,
-  SelectBackdrop,
-  SelectContent,
-  SelectDragIndicator,
-  SelectDragIndicatorWrapper,
-  SelectIcon,
-  SelectInput,
-  SelectItem,
-  SelectPortal,
-  SelectTrigger,
-} from "src/components/ui/select";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { useHabits } from "src/hooks/useHabits";
 
 export function HabitSelector() {
-  const { habits, addNewHabit } = useHabits();
+  const { habits, addNewHabit, removeHabit } = useHabits();
   const { setHabitId } = useHabitContext();
   const [selectedHabit, setSelectedHabit] = useState<string>("");
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   // Set initial selected habit when habits are loaded
   useEffect(() => {
@@ -75,30 +73,75 @@ export function HabitSelector() {
     }
   };
 
+  const handleRemoveHabit = async (habitId: string) => {
+    try {
+      await removeHabit(habitId);
+      // If the removed habit was selected, select the first available habit
+      if (selectedHabit === habitId && habits.length > 1) {
+        const nextHabit = habits.find((h) => h.id !== habitId);
+        if (nextHabit) {
+          setSelectedHabit(nextHabit.id);
+          setHabitId(nextHabit.id);
+        }
+      }
+    } catch (error) {
+      // Handle error appropriately
+      console.error("Failed to remove habit:", error);
+    }
+  };
+
   return (
     <React.Fragment>
-      <Select selectedValue={selectedHabit} onValueChange={handleHabitChange}>
-        <SelectTrigger className="mx-4 mb-4">
-          <SelectInput placeholder="Select a habit" />
-          <SelectIcon>
-            <Icon as={IconChevronDown} />
-          </SelectIcon>
-        </SelectTrigger>
-        <SelectPortal>
-          <SelectBackdrop />
-          <SelectContent>
-            <SelectDragIndicatorWrapper>
-              <SelectDragIndicator />
-            </SelectDragIndicatorWrapper>
-            {habits.map((habit) => (
-              <SelectItem key={habit.id} label={habit.name} value={habit.id} />
-            ))}
-            <Button onPress={() => setIsAddingNew(true)}>
-              <ButtonText>Add new habit</ButtonText>
-            </Button>
-          </SelectContent>
-        </SelectPortal>
-      </Select>
+      <Button
+        className="mx-4 mb-4"
+        onPress={() => setIsOpen(true)}
+        variant="outline"
+      >
+        <ButtonText>
+          {selectedHabit
+            ? habits.find((h) => h.id === selectedHabit)?.name
+            : "Select a habit"}
+        </ButtonText>
+        <Icon as={IconChevronDown} />
+      </Button>
+
+      <Actionsheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <ActionsheetBackdrop />
+        <ActionsheetContent>
+          <ActionsheetDragIndicatorWrapper>
+            <ActionsheetDragIndicator />
+          </ActionsheetDragIndicatorWrapper>
+          {habits.map((habit) => (
+            <ActionsheetItem
+              key={habit.id}
+              onPress={() => {
+                handleHabitChange(habit.id);
+                setIsOpen(false);
+              }}
+            >
+              <ActionsheetItemText>{habit.name}</ActionsheetItemText>
+              <Button
+                size="sm"
+                variant="outline"
+                onPress={(e) => {
+                  e.stopPropagation();
+                  void handleRemoveHabit(habit.id);
+                }}
+              >
+                <Icon as={IconX} size="sm" />
+              </Button>
+            </ActionsheetItem>
+          ))}
+          <ActionsheetItem
+            onPress={() => {
+              setIsAddingNew(true);
+              setIsOpen(false);
+            }}
+          >
+            <ActionsheetItemText>Add new habit</ActionsheetItemText>
+          </ActionsheetItem>
+        </ActionsheetContent>
+      </Actionsheet>
 
       <AlertDialog isOpen={isAddingNew} onClose={() => setIsAddingNew(false)}>
         <AlertDialogBackdrop />

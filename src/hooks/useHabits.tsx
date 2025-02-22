@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { db } from "src/db/drizzle";
 import { type Habit, habitsTable } from "src/db/schema";
@@ -28,8 +29,21 @@ export function useHabits() {
     }
   };
 
+  const removeHabit = async (habitId: string) => {
+    try {
+      await db.delete(habitsTable).where(eq(habitsTable.id, habitId));
+      setHabits((prevHabits) =>
+        prevHabits.filter((habit) => habit.id !== habitId),
+      );
+    } catch (error) {
+      console.error("Failed to remove habit:", error);
+      throw error;
+    }
+  };
+
   return {
     habits,
     addNewHabit,
+    removeHabit,
   };
 }
