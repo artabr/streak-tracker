@@ -175,7 +175,7 @@ function HomeScreenContent() {
           );
         }}
       />
-      <View className="absolute bottom-0 w-full h-1/3 flex items-center justify-center">
+      <View className="absolute z-0 bottom-0 w-full h-1/3 flex items-center justify-center">
         <FillPanelButton onPress={handleOpenBottomSheet} />
       </View>
       <BottomSheetPortal
