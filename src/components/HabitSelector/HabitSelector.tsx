@@ -32,10 +32,10 @@ import {
 } from "src/components/ui/select";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
-import { useHabitSelector } from "src/hooks/useHabitSelector";
+import { useHabits } from "src/hooks/useHabits";
 
 export function HabitSelector() {
-  const { habits, addNewHabit } = useHabitSelector();
+  const { habits, addNewHabit } = useHabits();
   const { setHabitId } = useHabitContext();
   const [selectedHabit, setSelectedHabit] = useState<string>("");
   const [isAddingNew, setIsAddingNew] = useState(false);

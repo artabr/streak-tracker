@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "src/db/drizzle";
 import { type Habit, habitsTable } from "src/db/schema";
 
-export function useHabitSelector() {
+export function useHabits() {
   const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
