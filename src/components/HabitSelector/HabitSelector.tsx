@@ -31,10 +31,12 @@ import {
   SelectTrigger,
 } from "src/components/ui/select";
 import { Text } from "src/components/ui/text";
+import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { useHabitSelector } from "src/hooks/useHabitSelector";
 
 export function HabitSelector() {
   const { habits, addNewHabit } = useHabitSelector();
+  const { setHabitId } = useHabitContext();
   const [selectedHabit, setSelectedHabit] = useState<string>("");
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
@@ -43,6 +45,7 @@ export function HabitSelector() {
   useEffect(() => {
     if (habits.length > 0 && !selectedHabit) {
       setSelectedHabit(habits[0].id);
+      setHabitId(habits[0].id);
     }
   }, [habits]);
 
@@ -52,6 +55,7 @@ export function HabitSelector() {
       return;
     }
     setSelectedHabit(value);
+    setHabitId(value);
   };
 
   const handleAddNewHabit = async (name: string) => {

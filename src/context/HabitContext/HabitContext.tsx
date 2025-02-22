@@ -1,5 +1,11 @@
 import { createId } from "@paralleldrive/cuid2";
-import { type ReactNode, createContext, useContext, useMemo } from "react";
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
 import { useHabitData } from "src/hooks/useHabitData";
@@ -11,6 +17,8 @@ import {
 interface HabitContextType {
   currentHabit?: Habit;
   calendarMarks: CalendarMark[];
+  habitId?: string;
+  setHabitId: (id: string) => void;
   addCalendarMarks: (
     calendarMarks: CalendarMark[],
     lastMarkingDate: string,
@@ -46,8 +54,9 @@ const calculateMarkingStatus = (habit?: Habit) => {
 };
 
 export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
+  const [habitId, setHabitId] = useState<string>();
   const { currentHabit, addCalendarMarks, calendarMarks, clearCalendarMarks } =
-    useHabitData();
+    useHabitData(habitId);
 
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
 
@@ -60,7 +69,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       return {
         id: createId(),
         calendarDate: CalendarUtils.getCalendarDateString(date),
-        habitId: currentHabit?.id ?? "defaultId",
+        habitId: currentHabit?.id ?? habitId,
         mark: skip ? "blue" : "red",
       };
     });
@@ -79,6 +88,8 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
     return {
       calendarMarks,
       currentHabit,
+      habitId,
+      setHabitId,
       addCalendarMarks,
       isNeedToMark,
       daysToMark,
@@ -88,6 +99,8 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
   }, [
     calendarMarks,
     currentHabit,
+    habitId,
+    setHabitId,
     addCalendarMarks,
     isNeedToMark,
     daysToMark,

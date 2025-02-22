@@ -53,6 +53,8 @@ function HomeScreenContent() {
     isNeedToMark,
     daysToMark,
     fillStreak,
+    currentHabit,
+    habitId,
   } = useHabitContext();
 
   const calendarMarksToMarkedDates = (calendarMarks: CalendarMark[]) => {
@@ -75,7 +77,7 @@ function HomeScreenContent() {
           id: createId(),
           calendarDate: getCalendarDateStringInNumberOfDays(day?.timestamp),
           mark: "red",
-          habitId: "defaultId",
+          habitId: currentHabit?.id ?? habitId ?? "defaultId",
         },
       ],
       getCalendarDateStringInNumberOfDays(day?.timestamp),

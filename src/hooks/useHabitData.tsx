@@ -9,9 +9,9 @@ import {
 } from "src/db/schema";
 import { getYesterdayCalendarDateString } from "src/utils/calendar";
 
-const fetchHabitFromDb = async () => {
+const fetchHabitFromDb = async (habitId: string) => {
   const queryResults = await db.query.calendarMarksTable.findMany({
-    where: eq(calendarMarksTable.habitId, "defaultId"),
+    where: eq(calendarMarksTable.habitId, habitId),
     with: { habit: true },
   });
 
@@ -40,12 +40,12 @@ const updateLastMarkingDate = async (
     .returning();
 };
 
-export const useHabitData = () => {
+export const useHabitData = (habitId = "defaultId") => {
   const [calendarMarks, setCalendarMarks] = useState<CalendarMark[]>([]);
   const [currentHabit, setCurrentHabit] = useState<Habit | undefined>();
 
   const setHabitState = async () => {
-    const { calendarMarks, habit } = await fetchHabitFromDb();
+    const { calendarMarks, habit } = await fetchHabitFromDb(habitId);
 
     setCalendarMarks(calendarMarks);
     setCurrentHabit(habit);
@@ -61,30 +61,30 @@ export const useHabitData = () => {
     ]);
     setCurrentHabit((prevHabit) => ({
       ...prevHabit,
-      id: prevHabit?.id ?? "defaultId",
+      id: prevHabit?.id ?? habitId,
       name: prevHabit?.name ?? "currentHabit",
       lastMarkingDate,
     }));
     await insertCalendarMarks(calendarMarks);
-    await updateLastMarkingDate("defaultId", lastMarkingDate);
+    await updateLastMarkingDate(habitId, lastMarkingDate);
   };
 
   const clearCalendarMarks = async () => {
     setCalendarMarks([]);
     setCurrentHabit((prevHabit) => ({
       ...prevHabit,
-      id: prevHabit?.id ?? "defaultId",
+      id: prevHabit?.id ?? habitId,
       name: prevHabit?.name ?? "currentHabit",
       lastMarkingDate: getYesterdayCalendarDateString(),
     }));
     await db
       .delete(calendarMarksTable)
-      .where(eq(calendarMarksTable.habitId, "defaultId"));
+      .where(eq(calendarMarksTable.habitId, habitId));
   };
 
   useEffect(() => {
     void setHabitState();
-  }, []);
+  }, [habitId]);
 
   return { calendarMarks, currentHabit, addCalendarMarks, clearCalendarMarks };
 };
