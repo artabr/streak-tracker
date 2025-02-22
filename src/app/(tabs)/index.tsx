@@ -8,6 +8,7 @@ import { AppState, type GestureResponderEvent, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import type { DateData, MarkedDates } from "react-native-calendars/src/types";
 import { FillPanelButton } from "src/components/FillPanelButton/FillPanelButton";
+import { HabitSelector } from "src/components/HabitSelector/HabitSelector";
 import {
   BottomSheetBackdrop,
   BottomSheetContent,
@@ -133,6 +134,7 @@ function HomeScreenContent() {
 
   return (
     <View className="h-full pt-12 bg-gray-100">
+      <HabitSelector />
       <Calendar
         style={{
           backgroundColor: "#FBFBFB",
