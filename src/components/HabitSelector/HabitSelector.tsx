@@ -1,4 +1,5 @@
-import { IconChevronDown, IconX } from "@tabler/icons-react-native";
+import { IconChevronDown, IconDots } from "@tabler/icons-react-native";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import React from "react";
 import {
@@ -38,6 +39,7 @@ export function HabitSelector({ defaultHabitId = "" }) {
   const [isEditHabitsModalOpen, setIsEditHabitsModalOpen] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
   const [isSelectorOptionsOpen, setIsSelectorOptionsOpen] = useState(false);
+  const router = useRouter();
 
   const handleHabitChange = (value: string) => {
     if (value === "new") {
@@ -82,6 +84,14 @@ export function HabitSelector({ defaultHabitId = "" }) {
     }
   };
 
+  const handleMoreOptions = (habitId: string) => () => {
+    setIsSelectorOptionsOpen(false);
+    router.push({
+      pathname: "/habit-options/[habitId]",
+      params: { habitId },
+    });
+  };
+
   return (
     <React.Fragment>
       <Button
@@ -118,12 +128,10 @@ export function HabitSelector({ defaultHabitId = "" }) {
               <Button
                 size="sm"
                 variant="outline"
-                onPress={(e) => {
-                  e.stopPropagation();
-                  void handleRemoveHabit(habit.id);
-                }}
+                onPress={handleMoreOptions(habit.id)}
+                className="ml-auto"
               >
-                <Icon as={IconX} size="sm" />
+                <Icon as={IconDots} size="sm" />
               </Button>
             </ActionsheetItem>
           ))}
