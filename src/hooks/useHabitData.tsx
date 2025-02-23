@@ -40,7 +40,11 @@ const updateLastMarkingDate = async (
     .returning();
 };
 
-export const useHabitData = (habitId = "defaultId") => {
+export const DEFAULT_HABIT_ID = "defaultId";
+
+export const DEFAULT_HABIT_NAME = "My Habit";
+
+export const useHabitData = (habitId = DEFAULT_HABIT_ID) => {
   const [calendarMarks, setCalendarMarks] = useState<CalendarMark[]>([]);
   const [currentHabit, setCurrentHabit] = useState<Habit | undefined>();
 
@@ -62,7 +66,7 @@ export const useHabitData = (habitId = "defaultId") => {
     setCurrentHabit((prevHabit) => ({
       ...prevHabit,
       id: prevHabit?.id ?? habitId,
-      name: prevHabit?.name ?? "currentHabit",
+      name: prevHabit?.name ?? DEFAULT_HABIT_NAME,
       lastMarkingDate,
     }));
     await insertCalendarMarks(calendarMarks);
@@ -74,7 +78,7 @@ export const useHabitData = (habitId = "defaultId") => {
     setCurrentHabit((prevHabit) => ({
       ...prevHabit,
       id: prevHabit?.id ?? habitId,
-      name: prevHabit?.name ?? "currentHabit",
+      name: prevHabit?.name ?? DEFAULT_HABIT_NAME,
       lastMarkingDate: getYesterdayCalendarDateString(),
     }));
     await db

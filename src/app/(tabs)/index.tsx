@@ -24,6 +24,7 @@ import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
 import type { CalendarMark } from "src/db/schema";
+import { DEFAULT_HABIT_ID } from "src/hooks/useHabitData";
 import {
   getCalendarDateStringInNumberOfDays,
   getTodayCalendarDateString,
@@ -77,7 +78,7 @@ function HomeScreenContent() {
           id: createId(),
           calendarDate: getCalendarDateStringInNumberOfDays(day?.timestamp),
           mark: "red",
-          habitId: currentHabit?.id ?? habitId ?? "defaultId",
+          habitId: currentHabit?.id ?? habitId ?? DEFAULT_HABIT_ID,
         },
       ],
       getCalendarDateStringInNumberOfDays(day?.timestamp),
@@ -137,7 +138,7 @@ function HomeScreenContent() {
 
   return (
     <View className="h-full pt-12 bg-gray-100">
-      <HabitSelector />
+      <HabitSelector defaultHabitId={currentHabit?.id ?? habitId} />
       <Calendar
         style={{
           backgroundColor: "#FBFBFB",

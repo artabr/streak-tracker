@@ -1,5 +1,5 @@
 import { IconChevronDown, IconX } from "@tabler/icons-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import React from "react";
 import {
   Actionsheet,
@@ -31,25 +31,17 @@ import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { useHabits } from "src/hooks/useHabits";
 
-export function HabitSelector() {
+export function HabitSelector({ defaultHabitId = "" }) {
   const { habits, addNewHabit, removeHabit } = useHabits();
   const { setHabitId } = useHabitContext();
-  const [selectedHabit, setSelectedHabit] = useState<string>("");
-  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<string>(defaultHabitId);
+  const [isEditHabitsModalOpen, setIsEditHabitsModalOpen] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Set initial selected habit when habits are loaded
-  useEffect(() => {
-    if (habits.length > 0 && !selectedHabit) {
-      setSelectedHabit(habits[0].id);
-      setHabitId(habits[0].id);
-    }
-  }, [habits]);
+  const [isSelectorOptionsOpen, setIsSelectorOptionsOpen] = useState(false);
 
   const handleHabitChange = (value: string) => {
     if (value === "new") {
-      setIsAddingNew(true);
+      setIsEditHabitsModalOpen(true);
       return;
     }
     setSelectedHabit(value);
@@ -60,7 +52,7 @@ export function HabitSelector() {
     try {
       const newHabit = await addNewHabit(name);
       setSelectedHabit(newHabit.id);
-      setIsAddingNew(false);
+      setIsEditHabitsModalOpen(false);
     } catch (error) {
       // Handle error appropriately
     }
@@ -94,7 +86,7 @@ export function HabitSelector() {
     <React.Fragment>
       <Button
         className="mx-4 mb-4"
-        onPress={() => setIsOpen(true)}
+        onPress={() => setIsSelectorOptionsOpen(true)}
         variant="outline"
       >
         <ButtonText>
@@ -105,7 +97,10 @@ export function HabitSelector() {
         <Icon as={IconChevronDown} />
       </Button>
 
-      <Actionsheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Actionsheet
+        isOpen={isSelectorOptionsOpen}
+        onClose={() => setIsSelectorOptionsOpen(false)}
+      >
         <ActionsheetBackdrop />
         <ActionsheetContent>
           <ActionsheetDragIndicatorWrapper>
@@ -116,7 +111,7 @@ export function HabitSelector() {
               key={habit.id}
               onPress={() => {
                 handleHabitChange(habit.id);
-                setIsOpen(false);
+                setIsSelectorOptionsOpen(false);
               }}
             >
               <ActionsheetItemText>{habit.name}</ActionsheetItemText>
@@ -134,8 +129,8 @@ export function HabitSelector() {
           ))}
           <ActionsheetItem
             onPress={() => {
-              setIsAddingNew(true);
-              setIsOpen(false);
+              setIsEditHabitsModalOpen(true);
+              setIsSelectorOptionsOpen(false);
             }}
           >
             <ActionsheetItemText>Add new habit</ActionsheetItemText>
@@ -143,7 +138,10 @@ export function HabitSelector() {
         </ActionsheetContent>
       </Actionsheet>
 
-      <AlertDialog isOpen={isAddingNew} onClose={() => setIsAddingNew(false)}>
+      <AlertDialog
+        isOpen={isEditHabitsModalOpen}
+        onClose={() => setIsEditHabitsModalOpen(false)}
+      >
         <AlertDialogBackdrop />
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -163,7 +161,10 @@ export function HabitSelector() {
             </Input>
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button variant="outline" onPress={() => setIsAddingNew(false)}>
+            <Button
+              variant="outline"
+              onPress={() => setIsEditHabitsModalOpen(false)}
+            >
               <ButtonText>Cancel</ButtonText>
             </Button>
             <Button

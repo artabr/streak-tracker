@@ -8,7 +8,7 @@ import {
 } from "react";
 import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
-import { useHabitData } from "src/hooks/useHabitData";
+import { DEFAULT_HABIT_ID, useHabitData } from "src/hooks/useHabitData";
 import {
   getTodayCalendarDateString,
   getYesterdayCalendarDateString,
@@ -69,7 +69,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       return {
         id: createId(),
         calendarDate: CalendarUtils.getCalendarDateString(date),
-        habitId: currentHabit?.id ?? habitId,
+        habitId: currentHabit?.id ?? habitId ?? DEFAULT_HABIT_ID,
         mark: skip ? "blue" : "red",
       };
     });
