@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { db } from "src/db/drizzle";
-import { type Habit, habitsTable } from "src/db/schema";
+import { type Habit, calendarMarksTable, habitsTable } from "src/db/schema";
 
 export function useHabits() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -41,7 +41,7 @@ export function useHabits() {
     }
   };
 
-  const updateHabit = async (habitId: string, updates: { name: string }) => {
+  const updateHabit = async (habitId: string, updates: Partial<Habit>) => {
     try {
       const [updatedHabit] = await db
         .update(habitsTable)
@@ -62,25 +62,12 @@ export function useHabits() {
 
   const clearHabitData = async (habitId: string) => {
     try {
-      // This implementation depends on your schema
-      // You'll need to clear related tables that store habit data
-      // For example, if you have a habitEntries table:
-      // await db.delete(habitEntriesTable).where(eq(habitEntriesTable.habitId, habitId));
-
-      // For now, this is a placeholder that just resets the lastMarkingDate
-      const [updatedHabit] = await db
-        .update(habitsTable)
-        .set({ lastMarkingDate: null })
-        .where(eq(habitsTable.id, habitId))
-        .returning();
-
-      setHabits((prevHabits) =>
-        prevHabits.map((habit) =>
-          habit.id === habitId ? updatedHabit : habit,
-        ),
-      );
+      // Delete all calendar marks for this habit
+      await db
+        .delete(calendarMarksTable)
+        .where(eq(calendarMarksTable.habitId, habitId));
     } catch (error) {
-      console.error("Failed to clear habit data:", error);
+      console.error("Error clearing habit data:", error);
       throw error;
     }
   };

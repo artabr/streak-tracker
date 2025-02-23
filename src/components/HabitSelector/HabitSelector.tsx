@@ -1,6 +1,6 @@
 import { IconChevronDown, IconDots } from "@tabler/icons-react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import {
   Actionsheet,
@@ -33,11 +33,17 @@ import { useHabitContext } from "src/context/HabitContext/HabitContext";
 
 export function HabitSelector({ defaultHabitId = "" }) {
   const { habits, habitId, setHabitId, addNewHabit } = useHabitContext();
-  const [selectedHabit, setSelectedHabit] = useState<string>(defaultHabitId);
+  const [selectedHabit, setSelectedHabit] = useState<string>(
+    habitId ?? defaultHabitId,
+  );
   const [isEditHabitsModalOpen, setIsEditHabitsModalOpen] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
   const [isSelectorOptionsOpen, setIsSelectorOptionsOpen] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setSelectedHabit(habitId ?? defaultHabitId);
+  }, [habitId, defaultHabitId]);
 
   const handleHabitChange = (value: string) => {
     if (value === "new") {

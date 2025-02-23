@@ -3,6 +3,7 @@ import {
   type ReactNode,
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -66,6 +67,21 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
   const { currentHabit, addCalendarMarks, calendarMarks, clearCalendarMarks } =
     useHabitData(habitId);
 
+  useEffect(() => {
+    if (habits.length > 0) {
+      const mostRecentHabit = habits.reduce((latest, current) => {
+        if (!latest.lastMarkingDate) return current;
+        if (!current.lastMarkingDate) return latest;
+        return new Date(current.lastMarkingDate) >
+          new Date(latest.lastMarkingDate)
+          ? current
+          : latest;
+      }, habits[0]);
+
+      setHabitId(mostRecentHabit.id);
+    }
+  }, [habits]);
+
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
 
   const fillStreak = (skip?: boolean) => {
@@ -93,6 +109,15 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const value = useMemo(() => {
+    const handleClearHabitData = async (id: string) => {
+      if (id === habitId) {
+        // If deleting current habit, clear calendar marks from context
+        clearCalendarMarks();
+      }
+      // Call the clearHabitData from useHabits which will handle DB operations
+      await clearHabitData(id);
+    };
+
     return {
       habits,
       calendarMarks,
@@ -107,7 +132,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       addNewHabit,
       updateHabit,
       removeHabit,
-      clearHabitData,
+      clearHabitData: handleClearHabitData,
     };
   }, [
     habits,
