@@ -9,6 +9,7 @@ import {
 import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
 import { DEFAULT_HABIT_ID, useHabitData } from "src/hooks/useHabitData";
+import { useHabits } from "src/hooks/useHabits";
 import {
   getTodayCalendarDateString,
   getYesterdayCalendarDateString,
@@ -16,6 +17,7 @@ import {
 
 interface HabitContextType {
   currentHabit?: Habit;
+  habits: Habit[];
   calendarMarks: CalendarMark[];
   habitId?: string;
   setHabitId: (id: string) => void;
@@ -27,6 +29,10 @@ interface HabitContextType {
   daysToMark: number;
   fillStreak: (skip?: boolean) => void;
   clearCalendarMarks: () => void;
+  addNewHabit: (name: string) => Promise<Habit>;
+  updateHabit: (id: string, data: Partial<Habit>) => Promise<void>;
+  removeHabit: (id: string) => Promise<void>;
+  clearHabitData: (id: string) => Promise<void>;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -55,6 +61,8 @@ const calculateMarkingStatus = (habit?: Habit) => {
 
 export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
   const [habitId, setHabitId] = useState<string>();
+  const { habits, addNewHabit, updateHabit, removeHabit, clearHabitData } =
+    useHabits();
   const { currentHabit, addCalendarMarks, calendarMarks, clearCalendarMarks } =
     useHabitData(habitId);
 
@@ -86,6 +94,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(() => {
     return {
+      habits,
       calendarMarks,
       currentHabit,
       habitId,
@@ -95,8 +104,13 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       daysToMark,
       fillStreak,
       clearCalendarMarks,
+      addNewHabit,
+      updateHabit,
+      removeHabit,
+      clearHabitData,
     };
   }, [
+    habits,
     calendarMarks,
     currentHabit,
     habitId,
@@ -106,6 +120,10 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
     daysToMark,
     fillStreak,
     clearCalendarMarks,
+    addNewHabit,
+    updateHabit,
+    removeHabit,
+    clearHabitData,
   ]);
 
   return (

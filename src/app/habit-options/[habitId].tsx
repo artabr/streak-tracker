@@ -4,11 +4,12 @@ import { Box } from "src/components/ui/box";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Input, InputField } from "src/components/ui/input";
 import { Text } from "src/components/ui/text";
-import { useHabits } from "src/hooks/useHabits";
+import { useHabitContext } from "src/context/HabitContext/HabitContext";
 
 export default function HabitOptionsScreen() {
   const { habitId } = useLocalSearchParams<{ habitId: string }>();
-  const { habits, updateHabit, clearHabitData, removeHabit } = useHabits();
+  const { habits, updateHabit, clearHabitData, removeHabit } =
+    useHabitContext();
   const [habitName, setHabitName] = useState("");
   const router = useRouter();
 

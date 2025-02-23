@@ -30,11 +30,9 @@ import {
 } from "src/components/ui/input";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
-import { useHabits } from "src/hooks/useHabits";
 
 export function HabitSelector({ defaultHabitId = "" }) {
-  const { habits, addNewHabit, removeHabit } = useHabits();
-  const { setHabitId } = useHabitContext();
+  const { habits, habitId, setHabitId, addNewHabit } = useHabitContext();
   const [selectedHabit, setSelectedHabit] = useState<string>(defaultHabitId);
   const [isEditHabitsModalOpen, setIsEditHabitsModalOpen] = useState(false);
   const [newHabitName, setNewHabitName] = useState("");
@@ -64,23 +62,6 @@ export function HabitSelector({ defaultHabitId = "" }) {
     if (newHabitName.trim()) {
       void handleAddNewHabit(newHabitName.trim());
       setNewHabitName("");
-    }
-  };
-
-  const handleRemoveHabit = async (habitId: string) => {
-    try {
-      await removeHabit(habitId);
-      // If the removed habit was selected, select the first available habit
-      if (selectedHabit === habitId && habits.length > 1) {
-        const nextHabit = habits.find((h) => h.id !== habitId);
-        if (nextHabit) {
-          setSelectedHabit(nextHabit.id);
-          setHabitId(nextHabit.id);
-        }
-      }
-    } catch (error) {
-      // Handle error appropriately
-      console.error("Failed to remove habit:", error);
     }
   };
 
