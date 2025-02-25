@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { BottomSheet } from "src/components/ui/bottomsheet";
 import { HabitContextProvider } from "src/context/HabitContext/HabitContext";
+import { SettingsContextProvider } from "src/context/SettingsContext/SettingsContext";
 import { studioDb } from "src/db/drizzle";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -36,15 +37,17 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GluestackUIProvider mode="light">
-        <HabitContextProvider>
-          <BottomSheet>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </BottomSheet>
-        </HabitContextProvider>
+        <SettingsContextProvider>
+          <HabitContextProvider>
+            <BottomSheet>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+            </BottomSheet>
+          </HabitContextProvider>
+        </SettingsContextProvider>
       </GluestackUIProvider>
     </GestureHandlerRootView>
   );

@@ -2,6 +2,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { IconFlame, IconTrophy } from "@tabler/icons-react-native";
 import { clsx } from "clsx";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { Redirect } from "expo-router";
 import { Snowflake } from "lucide-react-native";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AppState, type GestureResponderEvent, View } from "react-native";
@@ -21,6 +22,7 @@ import { Icon } from "src/components/ui/icon";
 import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
+import { useSettingsContext } from "src/context/SettingsContext/SettingsContext";
 import { db } from "src/db/drizzle";
 import migrations from "src/db/migrations/migrations";
 import type { CalendarMark } from "src/db/schema";
@@ -32,6 +34,12 @@ import {
 
 export default function HomeScreen() {
   const { success, error } = useMigrations(db, migrations);
+  const { isLoading, hasCompletedOnboarding } = useSettingsContext();
+
+  // Redirect to onboarding if not completed
+  if (!hasCompletedOnboarding && !isLoading) {
+    return <Redirect href="/onboarding" />;
+  }
 
   if (error) {
     return (

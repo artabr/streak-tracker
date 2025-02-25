@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 
@@ -44,11 +44,10 @@ export const HabitSchema = createSelectSchema(habitsTable);
 export type Habit = z.infer<typeof HabitSchema>;
 
 export const userSettingsTable = sqliteTable("userSettings", {
-  id: text("id")
-    .$defaultFn(() => createId())
-    .notNull(),
-  name: text("name").notNull(),
-  value: text("value").notNull(),
+  userId: text("userId").primaryKey(),
+  hasCompletedOnboarding: integer("hasCompletedOnboarding", {
+    mode: "boolean",
+  }),
 });
 
 export const UserSettingSchema = createSelectSchema(userSettingsTable);

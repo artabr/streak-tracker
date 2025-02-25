@@ -15,6 +15,13 @@
       "when": 1738403667523,
       "tag": "0001_seed-habits",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1740470874399,
+      "tag": "0002_left_trauma",
+      "breakpoints": true
     }
   ]
 }
