@@ -48,6 +48,7 @@ export const userSettingsTable = sqliteTable("userSettings", {
   hasCompletedOnboarding: integer("hasCompletedOnboarding", {
     mode: "boolean",
   }),
+  currentHabitId: text("currentHabitId").references(() => habitsTable.id),
 });
 
 export const UserSettingSchema = createSelectSchema(userSettingsTable);

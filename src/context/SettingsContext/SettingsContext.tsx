@@ -5,6 +5,8 @@ interface SettingsContextType {
   hasCompletedOnboarding: boolean;
   completeOnboarding: () => Promise<void>;
   isLoading: boolean;
+  currentHabitId?: string;
+  updateCurrentHabitId: (habitId?: string) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
@@ -12,8 +14,13 @@ const SettingsContext = createContext<SettingsContextType | undefined>(
 );
 
 export function SettingsContextProvider({ children }: { children: ReactNode }) {
-  const { isLoading, hasCompletedOnboarding, completeOnboarding } =
-    useSettings();
+  const {
+    isLoading,
+    hasCompletedOnboarding,
+    completeOnboarding,
+    currentHabitId,
+    updateCurrentHabitId,
+  } = useSettings();
 
   return (
     <SettingsContext.Provider
@@ -21,6 +28,8 @@ export function SettingsContextProvider({ children }: { children: ReactNode }) {
         hasCompletedOnboarding,
         completeOnboarding,
         isLoading,
+        currentHabitId,
+        updateCurrentHabitId,
       }}
     >
       {children}
