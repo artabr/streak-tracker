@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "20c4390c-793d-4c44-be61-3f904d890de5",
+  "id": "748ae2d8-b111-489a-9354-5663c5743eed",
   "prevId": "8f8255f8-4d05-408f-9c85-b5e4de031788",
   "tables": {
     "calendarMarks": {
@@ -42,8 +42,12 @@
           "name": "calendarMarks_habitId_habits_id_fk",
           "tableFrom": "calendarMarks",
           "tableTo": "habits",
-          "columnsFrom": ["habitId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "habitId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -97,13 +101,33 @@
           "name": "hasCompletedOnboarding",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "notNull": false,
+          "autoincrement": false
+        },
+        "currentHabitId": {
+          "name": "currentHabitId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "userSettings_currentHabitId_habits_id_fk": {
+          "name": "userSettings_currentHabitId_habits_id_fk",
+          "tableFrom": "userSettings",
+          "tableTo": "habits",
+          "columnsFrom": [
+            "currentHabitId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

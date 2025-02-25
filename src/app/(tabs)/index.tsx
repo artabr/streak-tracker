@@ -34,12 +34,6 @@ import {
 
 export default function HomeScreen() {
   const { success, error } = useMigrations(db, migrations);
-  const { isLoading, hasCompletedOnboarding } = useSettingsContext();
-
-  // Redirect to onboarding if not completed
-  if (!hasCompletedOnboarding && !isLoading) {
-    return <Redirect href="/onboarding" />;
-  }
 
   if (error) {
     return (
@@ -56,6 +50,7 @@ export default function HomeScreen() {
 }
 
 function HomeScreenContent() {
+  const { isLoading, hasCompletedOnboarding } = useSettingsContext();
   const {
     calendarMarks,
     addCalendarMarks,
@@ -143,6 +138,11 @@ function HomeScreenContent() {
   const bottomSheetDescription = isNeedToMark
     ? "Did you practice up to today? Fill the streak or skip previous days."
     : "Great! You already practiced today! Keep it up!";
+
+  // Redirect to onboarding if not completed
+  if (!hasCompletedOnboarding && !isLoading) {
+    return <Redirect href="/onboarding" />;
+  }
 
   return (
     <View className="h-full pt-12 bg-gray-100">
