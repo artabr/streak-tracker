@@ -14,7 +14,7 @@ export const SettingsCard = () => {
   };
 
   return (
-    <Card size="lg" className="w-full bg-orange-200">
+    <Card size="lg" className="w-full bg-orange-100">
       <Heading size="xl" className="mb-3 text-stone-700">
         Settings
       </Heading>

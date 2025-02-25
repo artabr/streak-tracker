@@ -114,13 +114,13 @@ function HomeScreenContent() {
     };
   }, [isNeedToMark]);
 
-  const onFillHandler = () => {
-    fillStreak();
+  const onFillTodayHandler = () => {
+    fillStreak({ skipPrevious: true });
     handleClose();
   };
 
-  const onSkipHandler = () => {
-    fillStreak(true);
+  const onFillAllHandler = () => {
+    fillStreak({ skipPrevious: false });
     handleClose();
   };
 
@@ -221,18 +221,18 @@ function HomeScreenContent() {
 
             {isNeedToMark && (
               <View className="flex flex-col gap-8 mt-10">
-                <View className="flex flex-row gap-8">
+                <View className="flex flex-row gap-4">
                   <Button
-                    className="flex-1 h-24 bg-orange-500"
-                    onPress={onFillHandler}
+                    className="flex-1 h-24 bg-orange-200"
+                    onPress={onFillAllHandler}
                   >
-                    <ButtonText className="text-lg">Fill</ButtonText>
+                    <ButtonText className="text-lg">All</ButtonText>
                   </Button>
                   <Button
-                    className="flex-1 h-24 bg-blue-700"
-                    onPress={onSkipHandler}
+                    className="flex-[2_1_auto] h-24 bg-orange-500"
+                    onPress={onFillTodayHandler}
                   >
-                    <ButtonText className="text-lg">Skip previous</ButtonText>
+                    <ButtonText className="text-lg">Today</ButtonText>
                   </Button>
                 </View>
                 <Button

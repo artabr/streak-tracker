@@ -13,12 +13,14 @@ module.exports = {
       colors: {
         // custom colors for the app
         orange: {
-          200: "#FEF3E7",
+          100: "#FEF3E7",
+          200: "#FFB78B",
           300: "#F09E54",
           500: "#FE8235",
         },
         slate: {
           500: "#5B7380",
+          600: "#44555E",
         },
         blue: {
           500: "#36BAFF",

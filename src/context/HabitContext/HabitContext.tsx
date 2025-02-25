@@ -28,7 +28,7 @@ interface HabitContextType {
   ) => Promise<void>;
   isNeedToMark: boolean;
   daysToMark: number;
-  fillStreak: (skip?: boolean) => void;
+  fillStreak: (options?: { skipPrevious?: boolean }) => void;
   clearCalendarMarks: () => void;
   addNewHabit: (name: string) => Promise<Habit>;
   updateHabit: (id: string, data: Partial<Habit>) => Promise<void>;
@@ -84,28 +84,27 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
 
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
 
-  const fillStreak = (skip?: boolean) => {
+  const fillStreak = (options?: { skipPrevious?: boolean }) => {
     const streakData = Array.from({ length: daysToMark }, (_, index) => {
       const date = new Date(
         currentHabit?.lastMarkingDate ?? getYesterdayCalendarDateString(),
       );
       date.setDate(date.getDate() + index + 1);
+
+      // If skipPrevious is true and it's not the last day (today), mark as blue (freeze)
+      // Otherwise mark as red (completed)
+      const mark =
+        options?.skipPrevious && index < daysToMark - 1 ? "blue" : "red";
+
       return {
         id: createId(),
         calendarDate: CalendarUtils.getCalendarDateString(date),
         habitId: currentHabit?.id ?? habitId ?? DEFAULT_HABIT_ID,
-        mark: skip ? "blue" : "red",
+        mark,
       };
     });
 
-    if (skip) {
-      streakData.pop();
-    }
-
-    void addCalendarMarks(
-      streakData,
-      skip ? getYesterdayCalendarDateString() : getTodayCalendarDateString(),
-    );
+    void addCalendarMarks(streakData, getTodayCalendarDateString());
   };
 
   const value = useMemo(() => {

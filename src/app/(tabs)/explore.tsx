@@ -1,5 +1,4 @@
 import { ScrollView, View } from "react-native";
-import { SettingsCard } from "src/components/SettingsCard/SettingsCard";
 import { Card } from "src/components/ui/card";
 import { Heading } from "src/components/ui/heading";
 import { Text } from "src/components/ui/text";
@@ -38,8 +37,8 @@ export default function TabTwoScreen() {
                 happens, and that’s okay!
               </Text>
               <Text className="text-white">
-                At the start of the app, we’ll notify you about the days you
-                need to mark, so you never lose track.
+                At the start of the app, we’ll show you the days you need to
+                mark, so you never lose track.
               </Text>
             </VStack>
           </Card>
@@ -53,14 +52,15 @@ export default function TabTwoScreen() {
                 {`\u2022 `}Track your progress with a simple calendar view.
               </Text>
               <Text>{`\u2022 `}Build streaks to strengthen your habits.</Text>
-              <Text>{`\u2022 `}Get reminders to keep you on track.</Text>
+              <Text>
+                {`\u2022 `}Get reminded at the start of the app to keep you on
+                track.
+              </Text>
               <Text>
                 Ready to build better habits? Start tracking today! 🔥
               </Text>
             </VStack>
           </Card>
-
-          <SettingsCard />
         </VStack>
       </ScrollView>
     </View>
