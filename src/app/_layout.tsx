@@ -9,6 +9,7 @@ import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { Migration } from "src/components/Migration/Migration";
 import { BottomSheet } from "src/components/ui/bottomsheet";
 import { HabitContextProvider } from "src/context/HabitContext/HabitContext";
 import { SettingsContextProvider } from "src/context/SettingsContext/SettingsContext";
@@ -37,17 +38,22 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GluestackUIProvider mode="light">
-        <SettingsContextProvider>
-          <HabitContextProvider>
-            <BottomSheet>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <StatusBar style="auto" />
-            </BottomSheet>
-          </HabitContextProvider>
-        </SettingsContextProvider>
+        <Migration>
+          <SettingsContextProvider>
+            <HabitContextProvider>
+              <BottomSheet>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="auto" />
+              </BottomSheet>
+            </HabitContextProvider>
+          </SettingsContextProvider>
+        </Migration>
       </GluestackUIProvider>
     </GestureHandlerRootView>
   );

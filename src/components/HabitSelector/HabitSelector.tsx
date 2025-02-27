@@ -58,6 +58,7 @@ export function HabitSelector({ defaultHabitId = "" }) {
     try {
       const newHabit = await addNewHabit(name);
       setSelectedHabit(newHabit.id);
+      setHabitId(newHabit.id);
       setIsEditHabitsModalOpen(false);
     } catch (error) {
       // Handle error appropriately
@@ -146,7 +147,7 @@ export function HabitSelector({ defaultHabitId = "" }) {
           <AlertDialogBody>
             <Input>
               <InputField
-                value={newHabitName}
+                defaultValue={newHabitName}
                 onChangeText={setNewHabitName}
                 placeholder="Enter habit name"
               />

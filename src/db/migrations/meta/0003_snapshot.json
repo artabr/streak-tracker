@@ -1,8 +1,8 @@
 {
+  "id": "af53cce9-e5ce-470d-acdf-a7c1700a5951",
+  "prevId": "748ae2d8-b111-489a-9354-5663c5743eed",
   "version": "6",
   "dialect": "sqlite",
-  "id": "748ae2d8-b111-489a-9354-5663c5743eed",
-  "prevId": "8f8255f8-4d05-408f-9c85-b5e4de031788",
   "tables": {
     "calendarMarks": {
       "name": "calendarMarks",
@@ -41,11 +41,11 @@
         "calendarMarks_habitId_habits_id_fk": {
           "name": "calendarMarks_habitId_habits_id_fk",
           "tableFrom": "calendarMarks",
-          "tableTo": "habits",
           "columnsFrom": ["habitId"],
+          "tableTo": "habits",
           "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -113,11 +113,11 @@
         "userSettings_currentHabitId_habits_id_fk": {
           "name": "userSettings_currentHabitId_habits_id_fk",
           "tableFrom": "userSettings",
-          "tableTo": "habits",
           "columnsFrom": ["currentHabitId"],
+          "tableTo": "habits",
           "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -128,11 +128,9 @@
   "views": {},
   "enums": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {
-      "\"userSettings\".\"id\"": "\"userSettings\".\"userId\""
-    }
+    "tables": {}
   },
   "internal": {
     "indexes": {}

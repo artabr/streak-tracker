@@ -1,7 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { IconFlame, IconTrophy } from "@tabler/icons-react-native";
 import { clsx } from "clsx";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { Redirect } from "expo-router";
 import { Snowflake } from "lucide-react-native";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -23,8 +22,6 @@ import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import { useSettingsContext } from "src/context/SettingsContext/SettingsContext";
-import { db } from "src/db/drizzle";
-import migrations from "src/db/migrations/migrations";
 import type { CalendarMark } from "src/db/schema";
 import { DEFAULT_HABIT_ID } from "src/hooks/useHabitData";
 import {
@@ -33,23 +30,6 @@ import {
 } from "src/utils/calendar";
 
 export default function HomeScreen() {
-  const { success, error } = useMigrations(db, migrations);
-
-  if (error) {
-    return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
-  if (!success) {
-    return <View className="flex-1 gap-5 p-6 bg-secondary/30"></View>;
-  }
-
-  return <HomeScreenContent />;
-}
-
-function HomeScreenContent() {
   const { isLoading, hasCompletedOnboarding } = useSettingsContext();
   const {
     calendarMarks,

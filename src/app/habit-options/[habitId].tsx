@@ -50,7 +50,7 @@ export default function HabitOptionsScreen() {
       <Box className="flex-1 p-4">
         <Input className="mb-4">
           <InputField
-            value={habitName}
+            defaultValue={habitName}
             onChangeText={setHabitName}
             placeholder="Habit name"
           />

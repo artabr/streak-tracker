@@ -1,4 +1,5 @@
 import { ScrollView, View } from "react-native";
+import { OnboardingCard } from "src/components/OnboardingCard/OnboardingCard";
 import { Card } from "src/components/ui/card";
 import { Heading } from "src/components/ui/heading";
 import { Text } from "src/components/ui/text";
@@ -61,6 +62,8 @@ export default function TabTwoScreen() {
               </Text>
             </VStack>
           </Card>
+
+          <OnboardingCard />
         </VStack>
       </ScrollView>
     </View>

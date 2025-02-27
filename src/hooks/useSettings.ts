@@ -49,9 +49,12 @@ export function useSettings() {
     try {
       setHasCompletedOnboarding(true);
       await db
-        .update(userSettingsTable)
-        .set({ hasCompletedOnboarding: true })
-        .where(eq(userSettingsTable.userId, DEFAULT_USER_ID));
+        .insert(userSettingsTable)
+        .values({ userId: DEFAULT_USER_ID, hasCompletedOnboarding: true })
+        .onConflictDoUpdate({
+          target: userSettingsTable.userId,
+          set: { hasCompletedOnboarding: true },
+        });
     } catch (error) {
       console.error("Error updating onboarding status:", error);
 
@@ -63,9 +66,12 @@ export function useSettings() {
     try {
       setCurrentHabitId(habitId);
       await db
-        .update(userSettingsTable)
-        .set({ currentHabitId: habitId })
-        .where(eq(userSettingsTable.userId, DEFAULT_USER_ID));
+        .insert(userSettingsTable)
+        .values({ userId: DEFAULT_USER_ID, currentHabitId: habitId })
+        .onConflictDoUpdate({
+          target: userSettingsTable.userId,
+          set: { currentHabitId: habitId },
+        });
     } catch (error) {
       console.error("Error updating current habit:", error);
       throw error;
