@@ -83,16 +83,18 @@ export function HabitSelector({ defaultHabitId = "" }) {
   return (
     <React.Fragment>
       <Button
-        className="mx-4 mb-4"
+        className="mx-4 mb-4 h-14 rounded-full bg-gray-300 data-[active=true]:bg-gray-500"
         onPress={() => setIsSelectorOptionsOpen(true)}
-        variant="outline"
       >
-        <ButtonText>
+        <ButtonText className="flex-1 text-lg text-stone-700 data-[active=true]:text-stone-700 text-center">
           {selectedHabit
             ? habits.find((h) => h.id === selectedHabit)?.name
             : "Select a habit"}
         </ButtonText>
-        <Icon as={IconChevronDown} />
+        <Icon
+          as={IconChevronDown}
+          className="absolute w-6 h-6 text-stone-700 right-6"
+        />
       </Button>
 
       <Actionsheet
@@ -144,7 +146,7 @@ export function HabitSelector({ defaultHabitId = "" }) {
             <Text>Add New Habit</Text>
           </AlertDialogHeader>
           <AlertDialogCloseButton />
-          <AlertDialogBody>
+          <AlertDialogBody className="mb-4">
             <Input>
               <InputField
                 defaultValue={newHabitName}
@@ -158,7 +160,7 @@ export function HabitSelector({ defaultHabitId = "" }) {
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button
-              variant="outline"
+              action="secondary"
               onPress={() => setIsEditHabitsModalOpen(false)}
             >
               <ButtonText>Cancel</ButtonText>

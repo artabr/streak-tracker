@@ -1,9 +1,10 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Box } from "src/components/ui/box";
 import { Button, ButtonText } from "src/components/ui/button";
 import { Input, InputField } from "src/components/ui/input";
 import { Text } from "src/components/ui/text";
+import { VStack } from "src/components/ui/vstack";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 
 export default function HabitOptionsScreen() {
@@ -45,38 +46,55 @@ export default function HabitOptionsScreen() {
   if (!habit) return null;
 
   return (
-    <Box className="flex-1">
-      <Text size="xl">{`Edit "${habit.name}" habit`}</Text>
-      <Box className="flex-1 p-4">
-        <Input className="mb-4">
-          <InputField
-            defaultValue={habitName}
-            onChangeText={setHabitName}
-            placeholder="Habit name"
-          />
-        </Input>
+    <>
+      <Stack.Screen
+        options={{
+          headerTitle: "Edit habit",
+        }}
+      />
+      <Box className="flex-1 bg-gray-100 pt-4">
+        <Box className="flex-1 p-4">
+          <VStack space="xs" className="mb-8">
+            <Text>Habit name:</Text>
+            <Input className="mb-4 bg-gray-300 rounded-lg h-16">
+              <InputField
+                defaultValue={habitName}
+                onChangeText={setHabitName}
+                placeholder="Habit name"
+              />
+            </Input>
+          </VStack>
 
-        <Button
-          onPress={handleSave}
-          disabled={!habitName.trim()}
-          className="mb-4"
-        >
-          <ButtonText>Save changes</ButtonText>
-        </Button>
+          <Button
+            onPress={handleSave}
+            disabled={!habitName.trim()}
+            size="lg"
+            className="mb-4 h-12"
+          >
+            <ButtonText>Save changes</ButtonText>
+          </Button>
 
-        <Button
-          variant="outline"
-          action="negative"
-          onPress={handleClearData}
-          className="mb-4"
-        >
-          <ButtonText>Clear habit data</ButtonText>
-        </Button>
+          <Button
+            variant="outline"
+            action="negative"
+            onPress={handleClearData}
+            size="lg"
+            className="mb-4 h-12 text-red-500"
+          >
+            <ButtonText>Clear habit data</ButtonText>
+          </Button>
 
-        <Button variant="outline" action="negative" onPress={handleRemoveHabit}>
-          <ButtonText>Remove Habit</ButtonText>
-        </Button>
+          <Button
+            variant="outline"
+            action="negative"
+            size="lg"
+            className="mb-4 h-12 text-red-500"
+            onPress={handleRemoveHabit}
+          >
+            <ButtonText>Remove Habit</ButtonText>
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }
