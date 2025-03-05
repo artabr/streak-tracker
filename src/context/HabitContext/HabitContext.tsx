@@ -1,12 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import {
-  type ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { type ReactNode, createContext, useContext, useMemo } from "react";
 import { CalendarUtils } from "react-native-calendars";
 import type { CalendarMark, Habit } from "src/db/schema";
 import { DEFAULT_HABIT_ID, useHabitData } from "src/hooks/useHabitData";
@@ -15,6 +8,7 @@ import {
   getTodayCalendarDateString,
   getYesterdayCalendarDateString,
 } from "src/utils/calendar";
+import { useSettingsContext } from "../SettingsContext/SettingsContext";
 
 interface HabitContextType {
   currentHabit?: Habit;
@@ -61,26 +55,11 @@ const calculateMarkingStatus = (habit?: Habit) => {
 };
 
 export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
-  const [habitId, setHabitId] = useState<string>();
+  const { currentHabitId, updateCurrentHabitId } = useSettingsContext();
   const { habits, addNewHabit, updateHabit, removeHabit, clearHabitData } =
     useHabits();
   const { currentHabit, addCalendarMarks, calendarMarks, clearCalendarMarks } =
-    useHabitData(habitId);
-
-  useEffect(() => {
-    if (habits.length > 0) {
-      const mostRecentHabit = habits.reduce((latest, current) => {
-        if (!latest.lastMarkingDate) return current;
-        if (!current.lastMarkingDate) return latest;
-        return new Date(current.lastMarkingDate) >
-          new Date(latest.lastMarkingDate)
-          ? current
-          : latest;
-      }, habits[0]);
-
-      setHabitId(mostRecentHabit.id);
-    }
-  }, [habits]);
+    useHabitData(currentHabitId);
 
   const { isNeedToMark, daysToMark } = calculateMarkingStatus(currentHabit);
 
@@ -99,7 +78,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       return {
         id: createId(),
         calendarDate: CalendarUtils.getCalendarDateString(date),
-        habitId: currentHabit?.id ?? habitId ?? DEFAULT_HABIT_ID,
+        habitId: currentHabit?.id ?? currentHabitId ?? DEFAULT_HABIT_ID,
         mark,
       };
     });
@@ -109,7 +88,7 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(() => {
     const handleClearHabitData = async (id: string) => {
-      if (id === habitId) {
+      if (id === currentHabitId) {
         // If deleting current habit, clear calendar marks from context
         clearCalendarMarks();
       }
@@ -121,8 +100,8 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
       habits,
       calendarMarks,
       currentHabit,
-      habitId,
-      setHabitId,
+      habitId: currentHabitId,
+      setHabitId: updateCurrentHabitId,
       addCalendarMarks,
       isNeedToMark,
       daysToMark,
@@ -137,8 +116,8 @@ export const HabitContextProvider = ({ children }: { children: ReactNode }) => {
     habits,
     calendarMarks,
     currentHabit,
-    habitId,
-    setHabitId,
+    currentHabitId,
+    updateCurrentHabitId,
     addCalendarMarks,
     isNeedToMark,
     daysToMark,

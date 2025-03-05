@@ -109,30 +109,39 @@ export function HabitSelector({ defaultHabitId = "" }) {
           {habits.map((habit) => (
             <ActionsheetItem
               key={habit.id}
+              className="flex items-center justify-between rounded-xl bg-stone-100 mb-4 pl-6"
               onPress={() => {
                 handleHabitChange(habit.id);
                 setIsSelectorOptionsOpen(false);
               }}
             >
-              <ActionsheetItemText>{habit.name}</ActionsheetItemText>
+              <ActionsheetItemText className="text-lg text-bold">
+                {habit.name}
+              </ActionsheetItemText>
               <Button
-                size="sm"
-                variant="outline"
+                size="md"
                 onPress={handleMoreOptions(habit.id)}
-                className="ml-auto"
+                className="bg-gray-400 data-[active=true]:bg-gray-600"
               >
-                <Icon as={IconDots} size="sm" />
+                <Icon
+                  as={IconDots}
+                  size="sm"
+                  className="text-stone-700 data-[active=true]:text-stone-700"
+                />
               </Button>
             </ActionsheetItem>
           ))}
-          <ActionsheetItem
+          <Button
             onPress={() => {
               setIsEditHabitsModalOpen(true);
               setIsSelectorOptionsOpen(false);
             }}
+            className="w-full mt-4 h-14 bg-gray-300 data-[active=true]:bg-gray-500"
           >
-            <ActionsheetItemText>Add new habit</ActionsheetItemText>
-          </ActionsheetItem>
+            <ButtonText className="text-stone-700 data-[active=true]:text-stone-700">
+              Add new habit
+            </ButtonText>
+          </Button>
         </ActionsheetContent>
       </Actionsheet>
 

@@ -135,7 +135,8 @@ export default function HomeScreen() {
         theme={{
           backgroundColor: "#FBFBFB",
           calendarBackground: "#FBFBFB",
-          arrowColor: "#FE8235",
+          arrowColor: "#D4D4D4",
+          monthTextColor: "#8A8A8A",
         }}
         markedDates={markedDates}
         // onDayPress={onDayPress}
@@ -188,14 +189,26 @@ export default function HomeScreen() {
 
             {isNeedToMark ? (
               <View className="flex flex-row justify-center my-10 gap-6">
-                {Array.from({ length: daysToMark }).map((_, index) => (
-                  <Icon
-                    // biome-ignore lint/suspicious/noArrayIndexKey: it's fine here because all elements are the same icons
-                    key={index}
-                    as={IconFlame}
-                    className="w-14 h-14 text-orange-500"
-                  />
-                ))}
+                {daysToMark < 5 ? (
+                  Array.from({ length: daysToMark }).map((_, index) => (
+                    <Icon
+                      // biome-ignore lint/suspicious/noArrayIndexKey: it's fine here because all elements are the same icons
+                      key={index}
+                      as={IconFlame}
+                      className="w-14 h-14 text-orange-500"
+                    />
+                  ))
+                ) : (
+                  <View className="flex flex-row items-center">
+                    <Text className="text-[56px] text-orange-500">
+                      {daysToMark}
+                    </Text>
+                    <Icon
+                      as={IconFlame}
+                      className="mt-2 w-14 h-14 text-orange-500"
+                    />
+                  </View>
+                )}
               </View>
             ) : (
               <View className="flex flex-row justify-center my-10">
@@ -211,13 +224,15 @@ export default function HomeScreen() {
               <View className="flex flex-col gap-8 mt-10">
                 <View className="flex flex-row gap-4">
                   <Button
-                    className="flex-1 h-24 bg-orange-200"
+                    className="flex-1 h-24 bg-orange-100"
                     onPress={onFillAllHandler}
                   >
-                    <ButtonText className="text-lg">All</ButtonText>
+                    <ButtonText className="text-lg text-orange-200">
+                      All
+                    </ButtonText>
                   </Button>
                   <Button
-                    className="flex-[2_1_auto] h-24 bg-orange-500"
+                    className="flex-1 h-24 bg-orange-500"
                     onPress={onFillTodayHandler}
                   >
                     <ButtonText className="text-lg">Today</ButtonText>

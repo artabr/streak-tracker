@@ -41,6 +41,17 @@ module.exports = {
           700: "#573926",
           800: "#371B34",
         },
+        red: {
+          50: "#FEF3F2",
+          100: "#FEE4E2",
+          200: "#FEC2C0",
+          300: "#FDA29B",
+          400: "#FB715A",
+          500: "#F04438",
+          600: "#D92D20",
+          700: "#B42318",
+          800: "#912018",
+        },
         // gluestack colors
         primary: {
           0: "rgb(var(--color-primary-0)/<alpha-value>)",
