@@ -1,10 +1,12 @@
-import { IconCheck, IconTrophy } from "@tabler/icons-react-native";
+import { IconCheck } from "@tabler/icons-react-native";
 import { Stack, useRouter } from "expo-router";
 import Onboarding, {
   type DoneButtonProps,
 } from "react-native-onboarding-swiper";
 import { Button } from "src/components/ui/button";
 import { Icon } from "src/components/ui/icon";
+import { Image } from "src/components/ui/image";
+import { Text } from "src/components/ui/text";
 import { useSettingsContext } from "src/context/SettingsContext/SettingsContext";
 
 const Done = ({ onPress }: DoneButtonProps) => (
@@ -37,26 +39,68 @@ export default function OnboardingPage() {
           {
             backgroundColor: "#fff",
             image: (
-              <Icon as={IconTrophy} className="w-24 h-24 text-orange-500" />
+              <Image
+                source={require("public/assets/images/onboarding1.png")}
+                alt="App's main screen"
+                resizeMode="contain"
+                size="none"
+                className="h-[400px]"
+              />
             ),
-            title: "Welcome to Habit Tracker",
-            subtitle: "Track your daily habits and build a better routine",
+            title: "Track Your Progress",
+            subtitle: (
+              <Text className="mx-10 text-center">
+                Stay on top of your habits with a clear calendar view. Each day
+                is marked as <Text className="font-bold">done</Text>🔥 or
+                skipped❄, helping you visualize your progress at a glance.
+              </Text>
+            ),
           },
           {
             backgroundColor: "#fff",
             image: (
-              <Icon as={IconTrophy} className="w-24 h-24 text-orange-500" />
+              <Image
+                source={require("public/assets/images/onboarding2.png")}
+                alt="Mark progress panel"
+                resizeMode="contain"
+                size="none"
+                className="h-[400px]"
+              />
             ),
-            title: "Set Your Goals",
-            subtitle: "Create and customize habits that matter to you",
+            title: "Log Your Habit Completion",
+            subtitle: (
+              <Text className="mx-10 text-center">
+                Easily update your habit status. Mark{" "}
+                <Text className="font-bold">all past days as done</Text>, set{" "}
+                <Text className="font-bold">
+                  today as done while skipping the rest
+                </Text>
+                , or <Text className="font-bold">postpone your decision</Text>{" "}
+                until later.
+              </Text>
+            ),
           },
           {
             backgroundColor: "#fff",
             image: (
-              <Icon as={IconTrophy} className="w-24 h-24 text-orange-500" />
+              <Image
+                source={require("public/assets/images/onboarding3.png")}
+                alt="Manage habits panel"
+                resizeMode="contain"
+                size="none"
+                className="h-[400px]"
+              />
             ),
-            title: "Stay Consistent",
-            subtitle: "Monitor your progress and stay motivated",
+            title: "Manage Your Habits",
+            subtitle: (
+              <Text className="mx-10 text-center">
+                Choose which habit to track on the main screen,{" "}
+                <Text className="font-bold">add new habits</Text>, or{" "}
+                <Text className="font-bold">edit existing ones</Text> to fit
+                your goals. Keep your habit list organized and tailored to your
+                needs.
+              </Text>
+            ),
           },
         ]}
       />

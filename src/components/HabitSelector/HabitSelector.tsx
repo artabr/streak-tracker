@@ -103,7 +103,7 @@ export function HabitSelector({ defaultHabitId = "" }) {
       >
         <ActionsheetBackdrop />
         <ActionsheetContent>
-          <ActionsheetDragIndicatorWrapper>
+          <ActionsheetDragIndicatorWrapper className="mb-2">
             <ActionsheetDragIndicator />
           </ActionsheetDragIndicatorWrapper>
           {habits.map((habit) => (

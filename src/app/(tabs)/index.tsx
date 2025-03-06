@@ -164,7 +164,7 @@ export default function HomeScreen() {
           return (
             <Pressable
               className={clsx("rounded p-1", isToday && "bg-stone-100")}
-              onPress={onDayPress(props.date)}
+              // onPress={onDayPress(props.date)}
             >
               <View className="w-8 h-8 flex items-center justify-center">
                 <Text className="text-lg text-gray-800">{props.date?.day}</Text>
