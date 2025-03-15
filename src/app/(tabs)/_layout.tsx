@@ -1,7 +1,12 @@
 import { Tabs } from "expo-router";
 import { Platform } from "react-native";
 
-import { IconHome, IconInfoCircle } from "@tabler/icons-react-native";
+import {
+  IconCalendar,
+  IconChartBar,
+  IconHome,
+  IconSettings,
+} from "@tabler/icons-react-native";
 import { clsx } from "clsx";
 import { HapticTab } from "src/components/HapticTab";
 import TabBarBackground from "src/components/ui/TabBarBackground";
@@ -47,12 +52,42 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="stats"
         options={{
-          title: "Explore",
+          title: "Statistics",
           tabBarIcon: ({ focused }) => (
             <Icon
-              as={IconInfoCircle}
+              as={IconChartBar}
+              className={clsx(
+                "w-10 h-10",
+                focused ? "text-orange-500" : "text-gray-500",
+              )}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          title: "Calendar",
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              as={IconCalendar}
+              className={clsx(
+                "w-10 h-10",
+                focused ? "text-orange-500" : "text-gray-500",
+              )}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              as={IconSettings}
               className={clsx(
                 "w-10 h-10",
                 focused ? "text-orange-500" : "text-gray-500",

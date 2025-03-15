@@ -1,18 +1,50 @@
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { db } from "src/db/drizzle";
-import { type Habit, calendarMarksTable, habitsTable } from "src/db/schema";
+import {
+  type CalendarMark,
+  type Habit,
+  calendarMarksTable,
+  habitsTable,
+} from "src/db/schema";
 
-export function useHabits() {
-  const [habits, setHabits] = useState<Habit[]>([]);
+export type HabitWithCalendarMarks = Habit & {
+  calendarMarks: CalendarMark[];
+};
+
+export const useHabits = () => {
+  const [habits, setHabits] = useState<HabitWithCalendarMarks[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchHabits = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const habits = await db.query.habitsTable.findMany({
+        with: {
+          calendarMarks: true,
+        },
+      });
+
+      setHabits(habits);
+    } catch (error) {
+      console.error("Error fetching habits:", error);
+      setError(
+        error instanceof Error ? error : new Error("Failed to fetch habits"),
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadHabits = async () => {
-      const habits = await db.select().from(habitsTable);
-      setHabits(habits);
-    };
-    void loadHabits();
+    void fetchHabits();
   }, []);
+
+  const refreshHabits = () => {
+    void fetchHabits();
+  };
 
   const addNewHabit = async (name: string) => {
     try {
@@ -74,9 +106,12 @@ export function useHabits() {
 
   return {
     habits,
+    isLoading,
+    error,
+    refreshHabits,
     addNewHabit,
     removeHabit,
     updateHabit,
     clearHabitData,
   };
-}
+};
