@@ -8,14 +8,14 @@ import { Heading } from "src/components/ui/heading";
 import { Icon } from "src/components/ui/icon";
 import { Text } from "src/components/ui/text";
 import { VStack } from "src/components/ui/vstack";
-import { useViewHabitsContext } from "src/context/ViewHabitsContext/ViewHabitsContext";
+import { useHabitContext } from "src/context/HabitContext/HabitContext";
 import {
   calendarMarksToMarkedDates,
   getTodayCalendarDateString,
 } from "src/utils/calendar";
 
 export default function StatsScreen() {
-  const { habits } = useViewHabitsContext();
+  const { habits } = useHabitContext();
 
   const renderNull = useCallback(() => {
     return null;

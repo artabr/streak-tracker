@@ -13,7 +13,6 @@ import { Migration } from "src/components/Migration/Migration";
 import { BottomSheet } from "src/components/ui/bottomsheet";
 import { HabitContextProvider } from "src/context/HabitContext/HabitContext";
 import { SettingsContextProvider } from "src/context/SettingsContext/SettingsContext";
-import { ViewHabitsProvider } from "src/context/ViewHabitsContext/ViewHabitsContext";
 import { studioDb } from "src/db/drizzle";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -41,20 +40,18 @@ export default function RootLayout() {
       <GluestackUIProvider mode="light">
         <Migration>
           <SettingsContextProvider>
-            <ViewHabitsProvider>
-              <HabitContextProvider>
-                <BottomSheet>
-                  <Stack>
-                    <Stack.Screen
-                      name="(tabs)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen name="+not-found" />
-                  </Stack>
-                  <StatusBar style="auto" />
-                </BottomSheet>
-              </HabitContextProvider>
-            </ViewHabitsProvider>
+            <HabitContextProvider>
+              <BottomSheet>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="auto" />
+              </BottomSheet>
+            </HabitContextProvider>
           </SettingsContextProvider>
         </Migration>
       </GluestackUIProvider>

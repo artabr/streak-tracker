@@ -31,8 +31,17 @@ import {
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
 
-export function HabitSelector({ defaultHabitId = "" }) {
-  const { habits, habitId, setHabitId, addNewHabit } = useHabitContext();
+export type HabitSelectorProps = {
+  defaultHabitId?: string;
+  onHabitChange?: (habitId: string) => void;
+};
+
+export function HabitSelector({
+  defaultHabitId = "",
+  onHabitChange,
+}: HabitSelectorProps) {
+  const [habitId, setHabitId] = useState<string>(defaultHabitId);
+  const { habits, addNewHabit } = useHabitContext();
   const [selectedHabit, setSelectedHabit] = useState<string>(
     habitId ?? defaultHabitId,
   );
@@ -46,12 +55,9 @@ export function HabitSelector({ defaultHabitId = "" }) {
   }, [habitId, defaultHabitId]);
 
   const handleHabitChange = (value: string) => {
-    if (value === "new") {
-      setIsEditHabitsModalOpen(true);
-      return;
-    }
     setSelectedHabit(value);
     setHabitId(value);
+    onHabitChange?.(value);
   };
 
   const handleAddNewHabit = async (name: string) => {

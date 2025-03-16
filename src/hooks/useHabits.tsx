@@ -7,10 +7,30 @@ import {
   calendarMarksTable,
   habitsTable,
 } from "src/db/schema";
+import { getYesterdayCalendarDateString } from "src/utils/calendar";
 
 export type HabitWithCalendarMarks = Habit & {
   calendarMarks: CalendarMark[];
 };
+
+const insertCalendarMarks = async (calendarMarks: CalendarMark[]) => {
+  return db.insert(calendarMarksTable).values(calendarMarks).returning();
+};
+
+const updateLastMarkingDate = async (
+  habitId: string,
+  lastMarkingDate: string,
+) => {
+  return db
+    .update(habitsTable)
+    .set({ lastMarkingDate })
+    .where(eq(habitsTable.id, habitId))
+    .returning();
+};
+
+export const DEFAULT_HABIT_ID = "defaultId";
+
+export const DEFAULT_HABIT_NAME = "My Habit";
 
 export const useHabits = () => {
   const [habits, setHabits] = useState<HabitWithCalendarMarks[]>([]);
@@ -53,7 +73,7 @@ export const useHabits = () => {
         .values({ name })
         .returning();
 
-      setHabits((prev) => [...prev, newHabit]);
+      setHabits((prev) => [...prev, { ...newHabit, calendarMarks: [] }]);
       return newHabit;
     } catch (error) {
       console.error("Failed to add new habit:", error);
@@ -83,7 +103,9 @@ export const useHabits = () => {
 
       setHabits((prevHabits) =>
         prevHabits.map((habit) =>
-          habit.id === habitId ? updatedHabit : habit,
+          habit.id === habitId
+            ? { ...updatedHabit, calendarMarks: habit.calendarMarks }
+            : habit,
         ),
       );
     } catch (error) {
@@ -104,6 +126,39 @@ export const useHabits = () => {
     }
   };
 
+  const addCalendarMarks = async (
+    calendarMarks: CalendarMark[],
+    lastMarkingDate: string,
+    habitId: string,
+  ) => {
+    setHabits((prevHabits) =>
+      prevHabits.map((habit) =>
+        habit.id === habitId
+          ? { ...habit, lastMarkingDate, calendarMarks }
+          : habit,
+      ),
+    );
+    await insertCalendarMarks(calendarMarks);
+    await updateLastMarkingDate(habitId, lastMarkingDate);
+  };
+
+  const clearCalendarMarks = async (habitId: string) => {
+    setHabits((prevHabits) =>
+      prevHabits.map((habit) =>
+        habit.id === habitId
+          ? {
+              ...habit,
+              lastMarkingDate: getYesterdayCalendarDateString(),
+              calendarMarks: [],
+            }
+          : habit,
+      ),
+    );
+    await db
+      .delete(calendarMarksTable)
+      .where(eq(calendarMarksTable.habitId, habitId));
+  };
+
   return {
     habits,
     isLoading,
@@ -113,5 +168,7 @@ export const useHabits = () => {
     removeHabit,
     updateHabit,
     clearHabitData,
+    addCalendarMarks,
+    clearCalendarMarks,
   };
 };

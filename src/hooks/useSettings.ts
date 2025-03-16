@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { useCallback, useEffect, useState } from "react";
 import { db } from "src/db/drizzle";
 import { userSettingsTable } from "src/db/schema";
-import { DEFAULT_HABIT_ID } from "./useHabitData";
+import { DEFAULT_HABIT_ID } from "./useHabits";
 
 export const DEFAULT_USER_ID = "defaultUserId";
 

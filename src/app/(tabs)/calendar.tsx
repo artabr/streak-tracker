@@ -11,7 +11,7 @@ import { Icon } from "src/components/ui/icon";
 import { Pressable } from "src/components/ui/pressable";
 import { Text } from "src/components/ui/text";
 import { useHabitContext } from "src/context/HabitContext/HabitContext";
-import { DEFAULT_HABIT_ID } from "src/hooks/useHabitData";
+import { DEFAULT_HABIT_ID } from "src/hooks/useHabits";
 import {
   calendarMarksToMarkedDates,
   getCalendarDateStringInNumberOfDays,
@@ -19,8 +19,17 @@ import {
 } from "src/utils/calendar";
 
 export default function CalendarScreen() {
-  const { calendarMarks, addCalendarMarks, currentHabit, habitId } =
-    useHabitContext();
+  const { habits, addCalendarMarks } = useHabitContext();
+
+  const firstHabitId = habits?.[0].id ?? DEFAULT_HABIT_ID;
+
+  const [currentHabitId, setCurrentHabitId] = useState(firstHabitId);
+
+  const calendarMarks =
+    habits?.find((habit) => habit.id === currentHabitId)?.calendarMarks ?? [];
+  console.log("currentHabitId", currentHabitId);
+  console.log("habits", habits);
+  console.log("calendarMarks", calendarMarks);
 
   const markedDates = calendarMarksToMarkedDates(calendarMarks ?? []);
 
@@ -32,10 +41,11 @@ export default function CalendarScreen() {
           id: createId(),
           calendarDate: getCalendarDateStringInNumberOfDays(day?.timestamp),
           mark: "red",
-          habitId: currentHabit?.id ?? habitId ?? DEFAULT_HABIT_ID,
+          habitId: currentHabitId ?? DEFAULT_HABIT_ID,
         },
       ],
       getCalendarDateStringInNumberOfDays(day?.timestamp),
+      currentHabitId ?? DEFAULT_HABIT_ID,
     );
   };
 
@@ -55,7 +65,10 @@ export default function CalendarScreen() {
 
   return (
     <View className="h-full pt-12 bg-gray-100">
-      <HabitSelector defaultHabitId={currentHabit?.id ?? habitId} />
+      <HabitSelector
+        defaultHabitId={currentHabitId}
+        onHabitChange={setCurrentHabitId}
+      />
       <Calendar
         style={{
           backgroundColor: "#FBFBFB",

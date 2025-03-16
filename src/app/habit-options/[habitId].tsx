@@ -12,7 +12,7 @@ import { useHabitContext } from "src/context/HabitContext/HabitContext";
 
 export default function HabitOptionsScreen() {
   const { habitId } = useLocalSearchParams<{ habitId: string }>();
-  const { habits, updateHabit, clearHabitData, removeHabit } =
+  const { habits, updateHabit, clearCalendarMarks, removeHabit } =
     useHabitContext();
   const [habitName, setHabitName] = useState("");
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function HabitOptionsScreen() {
 
   const handleClearData = async () => {
     if (habit) {
-      await clearHabitData(habit.id);
+      await clearCalendarMarks(habit.id);
       router.back();
     }
   };
