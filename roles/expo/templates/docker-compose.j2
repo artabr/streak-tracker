@@ -1,0 +1,24 @@
+services:
+  expo:
+    image: cr.yandex/crp1t0gfig213pmkqalv/{{ project_name }}-docker-expo:{{ image_version }}
+    container_name: "{{ project_name }}-{{ image_version }}"
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=web'
+      - 'traefik.http.routers.{{ project_name }}-{{ image_version }}.rule=Host(`{{ host_url }}`)'
+      - 'traefik.http.routers.{{ project_name }}-{{ image_version }}.entrypoints=expo'
+      - 'traefik.http.routers.{{ project_name }}-{{ image_version }}.service={{ project_name }}-{{ image_version }}'
+      - 'traefik.http.services.{{ project_name }}-{{ image_version }}.loadbalancer.server.port=8081'
+    networks:
+      - web
+      - internal
+    expose:
+      - 8081
+
+networks:
+  web:
+    name: web
+    external: true
+  internal:
+    driver: bridge

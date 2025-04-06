@@ -1,0 +1,12 @@
+---
+- name: Provisioning webservers group
+  hosts: webservers
+  remote_user: root
+  become: yes
+  vars:
+    user: root
+    group: docker
+    traefik_dir: /var/www/traefik
+    compose_dir: /var/www/
+  roles:
+    - { role: expo, tags: expo }

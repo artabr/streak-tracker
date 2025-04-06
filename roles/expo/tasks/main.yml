@@ -1,0 +1,40 @@
+---
+- name: Create docker-compose.yml file
+  file:
+    path: "{{ compose_dir }}/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    state: touch
+
+- name: Set host url
+  set_fact:
+    host_url: "feature-{{ image_version }}.{{ project_name }}.projects.{{ server_host }}"
+  when: image_version != "master"
+
+- name: Set host url
+  set_fact:
+    host_url: "tend-app.ru"
+  when: image_version == "master"
+
+- name: Deploy Docker Compose project
+  template:
+    src: docker-compose.j2
+    dest: "{{ compose_dir }}/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: 0644
+
+- name: Shutdown old containers
+  shell:
+    cmd: "docker-compose -p 'wp-{{ project_name }}-{{ image_version }}' down"
+    chdir: "{{ compose_dir }}"
+
+- name: Pull updated images
+  shell:
+    cmd: "docker-compose -f docker-compose.yml pull"
+    chdir: "{{ compose_dir }}"
+
+- name: Run docker-compose up
+  shell:
+    cmd: "docker-compose -p 'wp-{{ project_name }}-{{ image_version }}' -f docker-compose.yml up -d"
+    chdir: "{{ compose_dir }}"

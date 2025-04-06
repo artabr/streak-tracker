@@ -1,0 +1,77 @@
+name: Build and publish
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Extract branch name
+      id: extract_branch
+      run: |
+        BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+        echo "::notice::Branch name variable: ${BRANCH_NAME}"
+        echo "branchName=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+        IMAGE_VERSION=${BRANCH_NAME%%-*} && IMAGE_VERSION=${IMAGE_VERSION#*/}
+        echo "::notice::Image version variable: ${IMAGE_VERSION}"
+        echo "imageVersion=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
+        DOMAIN_NAME=feature-${IMAGE_VERSION}.${{ vars.PROJECT_NAME }}.projects.${{ vars.SERVER_HOST }}
+        echo "::notice::Home domain name variable: ${DOMAIN_NAME}"
+        echo "domainName=${DOMAIN_NAME}" >> $GITHUB_OUTPUT
+        HOME_URL=https://feature-${IMAGE_VERSION}.${{ vars.PROJECT_NAME }}.projects.${{ vars.SERVER_HOST }}
+        echo "::notice::Home URL variable: ${HOME_URL}"
+        echo "homeUrl=${HOME_URL}" >> $GITHUB_OUTPUT
+
+    - name: Build and push Docker image
+      uses: raisultan/ycr-push@main
+      env:
+        KEY_JSON: ${{ secrets.KEY_JSON }}
+        REGISTRY_ID: ${{ vars.REGISTRY_ID }}
+        DOCKERFILE_PATH: ./Dockerfile
+        DOCKERFILE_CONTEXT: --build-arg DOMAIN_NAME=${{ steps.extract_branch.outputs.domainName }} .
+        IMAGE_NAME: ${{ vars.PROJECT_NAME }}-docker-expo
+        IMAGE_TAG: ${{ steps.extract_branch.outputs.imageVersion }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Extract branch name
+      id: extract_branch
+      run: |
+        BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+        echo "::notice::Branch name variable: ${BRANCH_NAME}"
+        echo "branchName=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+        IMAGE_VERSION=${BRANCH_NAME%%-*} && IMAGE_VERSION=${IMAGE_VERSION#*/}
+        echo "::notice::Image version variable: ${IMAGE_VERSION}"
+        echo "imageVersion=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Run playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        # Required, playbook filepath
+        playbook: playbook.yml
+        # Optional, SSH private key
+        key: ${{secrets.SERVER_SSH_PRIVATE_KEY}}
+        # Optional, literal inventory file contents
+        inventory: |
+          [webservers]
+          ${{ vars.SERVER_HOST }}
+        # Optional, SSH known hosts file content
+        known_hosts: |
+          ${{ vars.SERVER_HOST }} ${{ vars.SSH_KNOWN_HOSTS }}
+        # Optional, additional flags to pass to ansible-playbook
+        options: |
+          --extra-vars "image_version=${{ steps.extract_branch.outputs.imageVersion }} project_name=${{ vars.PROJECT_NAME }} server_host=${{ vars.SERVER_HOST }}"
+          --verbose
